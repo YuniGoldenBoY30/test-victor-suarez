@@ -10,7 +10,7 @@ import duckdb
 
 from app.errores import ErrorEjecucionSQL
 from app.llm import ClienteLLM
-from app.validador_sql import validar_sql
+from app.validador_sql import SQLNoPermitidoError, validar_sql
 
 
 def a_json(valor: Any) -> Any:
@@ -50,7 +50,12 @@ class ServicioConsultas:
         self._abrir = abrir_conexion
 
     def consultar(self, pregunta: str) -> ResultadoConsulta:
-        sql = validar_sql(self._llm.generar_sql(pregunta))
+        generado = self._llm.generar_sql(pregunta)
+        try:
+            sql = validar_sql(generado)
+        except SQLNoPermitidoError as exc:
+            exc.sql = generado
+            raise
         conexion = self._abrir()
         try:
             try:

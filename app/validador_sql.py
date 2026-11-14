@@ -55,9 +55,10 @@ class SQLNoPermitidoError(Exception):
 
     codigo = "sql_no_valida"
 
-    def __init__(self, mensaje: str) -> None:
+    def __init__(self, mensaje: str, sql: str | None = None) -> None:
         super().__init__(mensaje)
         self.mensaje = mensaje
+        self.sql = sql  # SQL rechazado; lo rellena quien lo conoce (p. ej. el servicio)
 
 
 def _clases(*nombres: str) -> tuple[type, ...]:
