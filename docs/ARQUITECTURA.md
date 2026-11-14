@@ -126,3 +126,18 @@ flowchart LR
 - `backend` ejecuta `python -m etl --si-falta` y luego uvicorn; su healthcheck consulta `/health`; `frontend` espera a que esté sano (`depends_on`).
 - `.env` entra solo como `env_file` en tiempo de ejecución; no se copia a ninguna imagen.
 - En desarrollo local no hay nginx: Vite en `:5173` llama a `http://localhost:8000` y se usa CORS (`CORS_ORIGINS`).
+
+## 6. Despliegue en el VPS (Apache)
+
+En el VPS de pruebas (`test.zenixtech.ai`, Ubuntu con Apache 2.4.58 detrás de Cloudflare) **Apache** es el proxy inverso de entrada: termina TLS y reenvía todo el vhost a `http://127.0.0.1:8080/`, donde escucha el contenedor `frontend`. La cadena es Cloudflare → Apache → nginx del frontend → backend. El nginx del contenedor no cambia (ADR-5); Apache solo se añade delante (ADR-9).
+
+```mermaid
+flowchart LR
+    U[Navegador] -->|HTTPS| CF[Cloudflare]
+    CF -->|HTTPS :443| AP["Apache 2.4<br/>(VPS)"]
+    AP -->|"127.0.0.1:8080"| FE["frontend<br/>nginx:alpine"]
+    FE -->|"/api/"| BE["backend<br/>FastAPI :8000"]
+```
+
+- En el VPS el frontend se publica como `127.0.0.1:8080:80` (solo loopback) y el backend no publica puertos.
+- Vhost versionado en `deploy/apache/test.zenixtech.ai.conf`; procedimiento, pruebas de humo y vuelta atrás en `docs/DESPLIEGUE.md`.
