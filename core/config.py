@@ -1,5 +1,6 @@
 """Configuración central de la aplicación (única fuente de ajustes)."""
 import json
+import re
 from functools import lru_cache
 from typing import Annotated
 from urllib.parse import urlsplit
@@ -72,6 +73,28 @@ def _validar_host(host) -> str:
     return texto
 
 
+_TOKEN_CABECERA = re.compile(r"^[!#$%&'*+.^_`|~0-9A-Za-z-]+$")
+# Cabeceras que el cliente puede escribir o ampliar: nunca son una fuente fiable de la IP.
+_CABECERAS_IP_PROHIBIDAS = frozenset({"x-forwarded-for", "forwarded"})
+
+
+def _validar_cabecera_ip(valor) -> str:
+    """Nombre de cabecera HTTP (caracteres de token); vacío significa «no usar cabecera»."""
+    if not isinstance(valor, str):
+        raise ValueError(f"Nombre de cabecera no válido (se esperaba texto): {valor!r}")
+    texto = valor.strip()
+    if not texto:
+        return ""
+    if not _TOKEN_CABECERA.match(texto):
+        raise ValueError(f"Nombre de cabecera no válido, solo caracteres de token HTTP: {valor!r}")
+    if texto.lower() in _CABECERAS_IP_PROHIBIDAS:
+        raise ValueError(
+            f"{texto} no es una fuente fiable de la IP del cliente: la puede escribir el "
+            "cliente. Use una cabecera que el proxy sobrescriba (p. ej. X-Cliente-IP)."
+        )
+    return texto
+
+
 class Settings(BaseSettings):
     """Ajustes leídos del entorno y de `.env`. Las variables vacías se ignoran."""
 
@@ -90,17 +113,23 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
     trusted_hosts: Annotated[list[str], NoDecode] = ["localhost", "127.0.0.1"]
     api_docs: bool = False
-    # Límite de tasa por IP (peticiones por minuto). `consulta` llama al LLM de pago.
-    rate_limit_enabled: bool = True
-    rate_limit_rpm: int = Field(60, ge=1)
-    rate_limit_consulta_rpm: int = Field(10, ge=1)
-    # Proxies de confianza delante del backend (0 = ninguno: se usa la IP del socket).
-    rate_limit_trusted_hops: int = Field(0, ge=0, le=10)
+    # Límites de POST /consulta (0 desactiva el límite). Ver docs/TRD.md, secciones 10 y 11.
+    limite_consultas_minuto: int = Field(default=10, ge=0)
+    limite_consultas_hora: int = Field(default=60, ge=0)
+    limite_consultas_dia: int = Field(default=500, ge=0)
+    # Vacío: la IP del cliente es la de la conexión TCP. Con valor (p. ej. X-Cliente-IP, que
+    # Apache sobrescribe con la IP real) se usa esa cabecera si trae una IP válida.
+    cabecera_ip_cliente: str = ""
 
     @field_validator("cors_origins", "trusted_hosts", mode="before")
     @classmethod
     def _separar_valores(cls, valor):
         return _separar_lista(valor)
+
+    @field_validator("cabecera_ip_cliente", mode="before")
+    @classmethod
+    def _validar_cabecera(cls, valor):
+        return _validar_cabecera_ip(valor)
 
     @field_validator("cors_origins")
     @classmethod

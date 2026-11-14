@@ -12,6 +12,12 @@ Despliegue de pruebas de la aplicación en un VPS propio con **Apache como proxy
 | Acceso | SSH con las variables `VPS_PROD_USER`, `VPS_PROD_HOST` y `VPS_PROD_PASSWORD` de `.env` | Solo los nombres. Los valores nunca van al repositorio |
 
 
+### Estado actual (2026-11-15)
+
+- **Desplegado:** la aplicación real (no la página provisional) está publicada en `https://test.zenixtech.ai` desde la versión `35005f0` de la rama `feat/implementacion`, en `/opt/project-ai-role/releases/35005f0` (enlace `current`). Contenedores `project-ai-role-backend-1` (sano) y `project-ai-role-frontend-1`.
+- **Probado en un navegador real:** el panel carga ventas y top de clientes sin errores en consola, y una pregunta en lenguaje natural devuelve el SQL y la tabla (`POST /api/consulta` → `200`).
+- **Pendiente:** esa versión es anterior al endurecimiento de seguridad (PR #4). Al fusionar la PR #3 hay que volver a desplegar desde `main`: `python deploy/desplegar.py app --ref main`. El script ya escribe `TRUSTED_HOSTS`, `CORS_ORIGINS` y `CABECERA_IP_CLIENTE` en el `.env` del servidor (sección 5.1); sin `TRUSTED_HOSTS`, esa versión respondería `400` a todo.
+
 ## 2. Topología
 
 ```mermaid
@@ -39,8 +45,8 @@ flowchart LR
 
 ## 3. Requisitos en el VPS
 
-- Apache 2.4 con los módulos `proxy`, `proxy_http`, `headers`, `ssl` y `rewrite`:
-  `sudo a2enmod proxy proxy_http headers ssl rewrite`
+- Apache 2.4 con los módulos `proxy`, `proxy_http`, `headers`, `ssl`, `rewrite` y `remoteip`:
+  `sudo a2enmod proxy proxy_http headers ssl rewrite remoteip`
 - Docker Engine con el plugin compose (comprobado: Docker 29.7.1, Compose v5.4.0; Ubuntu 24.04.4).
 - Certificado Let's Encrypt en `/etc/letsencrypt/live/test.zenixtech.ai/`. Lo obtiene `desplegar.py vhost` con `certbot certonly --webroot` y se renueva solo. El bloque 443 del vhost va dentro de `<IfFile>`, así que solo se activa cuando existe el certificado.
 - Usuario de despliegue con acceso por **clave SSH**. La contraseña de `.env` solo sirve para dar de alta la clave; no debe usarse en scripts.
@@ -53,6 +59,9 @@ El vhost versionado está en `deploy/apache/test.zenixtech.ai.conf`. Se copia a 
 - `ProxyPass / http://127.0.0.1:8080/` y `ProxyPassReverse` iguales.
 - `ProxyTimeout 60`, porque `POST /consulta` espera al LLM.
 - El vhost del puerto 80 solo redirige a HTTPS.
+- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend limita las consultas por esa cabecera (`CABECERA_IP_CLIENTE=X-Cliente-IP`, ver sección 7). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
+- **Cabeceras del HTML:** `Strict-Transport-Security: max-age=31536000; includeSubDomains` (siempre, porque solo quien termina TLS puede ponerla), y con `setifempty`, para no pisar las más estrictas de la API: `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` y una CSP. `setifempty` actúa sobre la tabla `onsuccess`, que es la que ve las cabeceras del backend, pero solo se aplica a respuestas 2xx y 3xx. Los errores de la API (4xx y 5xx, también el 429) reciben HSTS y las cabeceras que pone el propio backend.
+- **CSP en modo informe** (`Content-Security-Policy-Report-Only`): Cloudflare inyecta un script en línea (`/cdn-cgi/challenge-platform`) que una CSP estricta bloquearía. Se pasará a `Content-Security-Policy` cuando la consola del navegador no muestre avisos que importen.
 
 ### 4.1 TRUSTED_HOSTS y la cabecera Host
 
@@ -88,7 +97,7 @@ Requiere `pip install paramiko`. Los scripts leen `.env` de la raíz (o el de `D
 |---|---|
 | `python deploy/instalar_clave.py` | **Una sola vez, lo ejecuta la persona responsable.** Usa `VPS_PROD_PASSWORD` para añadir la clave pública a `authorized_keys` y comprueba el acceso por clave. |
 | `python deploy/desplegar.py preflight` | Solo lectura: SO, Apache y módulos, vhost activos con `test.zenixtech.ai`, Docker, puertos 80/443/8080 y disco. |
-| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
+| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, al que añade `TRUSTED_HOSTS=test.zenixtech.ai,localhost,127.0.0.1`, `CORS_ORIGINS=https://test.zenixtech.ai` y `CABECERA_IP_CLIENTE=X-Cliente-IP` si el `.env` local no los define, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
 | `python deploy/desplegar.py vhost [--reemplazar]` | Instala el vhost y los módulos y hace `configtest` y `reload`. Se niega si otro vhost activo ya usa `test.zenixtech.ai`, salvo con `--reemplazar`. Si `configtest` falla, restaura los vhost anteriores sin recargar Apache. |
 | `python deploy/desplegar.py humo` | Pruebas de humo locales (8080) y públicas (`https://test.zenixtech.ai`). |
 
@@ -129,13 +138,13 @@ Las dos últimas filas comprueban `TRUSTED_HOSTS` a través de nginx, sin depend
   - Puerto 8000 cerrado desde fuera.
 - Pruebas de `Host` (filas de la tabla de la sección 6), comprobadas en local con las imágenes reconstruidas desde cero (paso s1, e000282): sin cabecera `Host` → `200`; `Host: test.zenixtech.ai` → `200`; `Host: evil.example` → `400`.
 - El VPS sigue ejecutando el commit `35005f0` (anterior a PR #4). Ahí el comportamiento de `Host` aplicará cuando se redespliegue `main`; hasta entonces no se ha comprobado en el VPS.
-- Pendiente: no hay cabecera HSTS. No hay autenticación ni límite de tasa (ver sección 7).
+- En esa fecha no había cabecera HSTS; la añadió después el vhost endurecido (tercera prueba). El límite de tasa llegó después en el backend (sección 7); la autenticación sigue fuera de alcance.
 
 ### Primera prueba (2026-11-14), histórica
 
 - DNS: correcto, resuelve a Cloudflare.
 - HTTP: `301` a HTTPS, correcto.
-- HTTPS: `200`, pero sirvió otra aplicación ("Panel de control") antes del primer despliegue.
+- HTTPS: `200`, pero servía el vhost por defecto del servidor ("Panel de control"). En esa fecha el proyecto aún no estaba desplegado (ver "Estado actual").
 - Por IP: el origen responde con `Apache/2.4.58 (Ubuntu)`, lo que confirma Apache en el VPS.
 - SSH: el acceso por clave no estaba configurado. No se entró con contraseña.
 
@@ -152,8 +161,19 @@ Tras instalar la clave con `instalar_clave.py`:
    - `/api/health` → `404`, como se espera: aún no hay backend.
    - `http://<ip-vps>:8080/` desde fuera → sin respuesta, solo loopback.
 
+### Tercera prueba: cabeceras e IP del cliente (2026-11-15)
+
+Tras `desplegar.py vhost` con el vhost endurecido (`configtest` correcto, `reload`):
+
+- `https://test.zenixtech.ai/` devuelve `Strict-Transport-Security`, `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y la CSP en modo informe.
+- **Suplantación de IP:** una petición directa al origen (sin pasar por Cloudflare) con `X-Cliente-IP: 6.6.6.6` y `CF-Connecting-IP: 7.7.7.7` llega al contenedor con `X-Cliente-IP: 127.0.0.1`, es decir, la IP real del que conecta. Una petición que sí pasa por Cloudflare llega con la IP real del cliente. Comprobado con `tcpdump` en el puerto 8080 del VPS.
+- Los demás sitios del VPS siguen respondiendo `200`.
+
 ## 7. Seguridad
 
 - `.env` está en `.gitignore`. Las credenciales del VPS no se copian a imágenes, al servidor ni a los documentos.
 - Recomendado: desactivar `PasswordAuthentication` en el VPS una vez dada de alta la clave, y no usar `root` para desplegar.
-- Puntos abiertos del despliegue público: autenticación y límite de tasa (ver `revision-arquitectura.md`, sección 6). Tampoco hay cabecera HSTS todavía. `test.zenixtech.ai` es accesible por cualquiera, así que cada pregunta consume la clave de NVIDIA.
+- **Acceso público sin login:** `test.zenixtech.ai` es accesible por cualquiera y cada pregunta consume la clave de NVIDIA. La autenticación sigue fuera de alcance (ver `revision-arquitectura.md`, sección 6).
+- **Límite de tasa:** el backend limita `POST /consulta` por IP de cliente (10/min y 60/h por defecto) y con un tope diario global (500 llamadas al LLM por día UTC), y responde `429` con `Retry-After`. La IP sale de `X-Cliente-IP`, que Apache sobrescribe con la IP real (sección 4); el script de despliegue escribe `CABECERA_IP_CLIENTE=X-Cliente-IP`. Detalle en `docs/TRD.md`.
+- **HSTS:** lo pone Apache desde el vhost endurecido (tercera prueba de la sección 6).
+- **Si hace falta cerrar el entorno de pruebas del todo:** autenticación básica de Apache (`AuthType Basic`) en el vhost, con la contraseña gestionada por el responsable fuera del repositorio.
