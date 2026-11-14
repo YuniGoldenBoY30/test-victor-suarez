@@ -76,6 +76,23 @@ Accesibilidad: etiquetas, teclado, contraste, `aria-live` en resultados y errore
 
 `.env` no se copia ni se incorpora a ninguna imagen.
 
+#### Límites de recursos
+
+Destino: VPS compartido de 2 CPU y 7,9 GB de RAM sin swap, con otros 13 contenedores sin límites (unos 5,7 GB disponibles). Los límites de `docker-compose.yml` se dimensionaron midiendo la pila en local (`docker stats` y `memory.peak` / `pids.peak` del cgroup) en reposo y con una ráfaga de 2400 peticiones (20 clientes en paralelo contra `/`, `/api/ventas-por-mes-pais` y `/api/top-clientes` vía nginx, todas con 200).
+
+| Servicio | Medido en reposo | Medido bajo carga (pico) | Límites aplicados |
+|---|---|---|---|
+| `backend` | 91 MiB, 2 PIDs, 0,2 % CPU | 174 MiB, 369 PIDs (sin límites, host de 12 CPU), CPU saturada | `cpus: 1.0`, `memory: 512M`, `memswap_limit: 512M`, `pids: 512`, reserva 0,25 CPU / 128M |
+| `frontend` | 12 MiB, 13 PIDs, 0 % CPU | 25 MiB, 19 PIDs, 14 % CPU | `cpus: 0.5`, `memory: 64M`, `memswap_limit: 64M`, `pids: 64`, reserva 0,05 CPU / 16M |
+
+- Memoria: unas 3 veces el pico medido en el backend (DuckDB y consultas más pesadas) y 2,5 veces en el frontend; `memswap_limit` igual a `memory` impide usar swap. Entre ambos suman como máximo 576 MiB, bajo el 10 % de la RAM libre.
+- CPU: el backend puede usar hasta 1 de las 2 CPU y el frontend media, de modo que el resto de contenedores siempre conserva CPU.
+- Procesos: `deploy.resources.limits.pids` (equivale a `pids_limit`; Compose no admite ambos a la vez) frena fork bombs. El pico del backend son hilos de DuckDB, que dependen de los núcleos del host (en el VPS serán bastantes menos que en la máquina de medida); con los límites aplicados el pico fue de 58.
+- Archivos abiertos: `ulimits.nofile` 4096 (blando y duro) en ambos, frente a 1048576 por defecto.
+- Logs: `json-file` con `max-size: 10m` y `max-file: 3` (máximo 30 MB por contenedor), para que los logs no llenen el disco.
+- Con los límites aplicados la misma ráfaga dio 2400 respuestas 200, sin `OOMKilled` ni reinicios (pico backend 162 MiB, frontend 16 MiB). Con la CPU del backend saturada, el healthcheck superó el timeout de 5 s en tres comprobaciones seguidas y se recuperó antes de agotar los 6 reintentos; es un efecto esperado de limitar a 1 CPU bajo una ráfaga muy superior al uso normal.
+- Estos límites los aplica `docker compose up` (no hace falta Swarm). Si el uso real crece, revisar con `docker stats` antes de subirlos.
+
 ### 3.5 Despliegue en el VPS (Apache)
 
 | Archivo / elemento | Contenido |

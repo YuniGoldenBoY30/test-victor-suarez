@@ -25,13 +25,29 @@ VHOST_LOCAL = RAIZ / "deploy" / "apache" / f"{DOMINIO}.conf"
 VHOST_REMOTO = f"/etc/apache2/sites-available/{DOMINIO}.conf"
 PUERTO_LOCAL = 8080
 PLACEHOLDER = "project-ai-role-placeholder"
-MODULOS = ("proxy", "proxy_http", "headers", "ssl", "rewrite")
+MODULOS = ("proxy", "proxy_http", "headers", "ssl", "rewrite", "remoteip")
+
+# Ajustes que dependen del dominio publicado. Sin TRUSTED_HOSTS el backend responde
+# 400 a todo lo que llega por el proxy (Host: test.zenixtech.ai). Un valor del .env
+# local con el mismo nombre tiene prioridad.
+AJUSTES_PRODUCCION = {
+    "TRUSTED_HOSTS": f"{DOMINIO},localhost,127.0.0.1",
+    "CORS_ORIGINS": f"https://{DOMINIO}",
+    # Apache la sobrescribe con la IP real del cliente (mod_remoteip).
+    "CABECERA_IP_CLIENTE": "X-Cliente-IP",
+}
+
+
+def env_produccion(datos: dict[str, str]) -> str:
+    """.env del servidor: el local sin VPS_* más los ajustes del dominio que falten."""
+    extra = {k: v for k, v in AJUSTES_PRODUCCION.items() if not datos.get(k)}
+    return env_para_servidor(datos) + "".join(f"{k}={v}\n" for k, v in extra.items())
 
 
 def preflight(cli, s: str) -> None:
     ejecutar(cli, "uname -a; . /etc/os-release && echo $PRETTY_NAME; whoami", comprobar=False)
     ejecutar(cli, "apache2 -v 2>&1 | head -1", comprobar=False)
-    ejecutar(cli, f"{s}apache2ctl -M 2>/dev/null | grep -E '(proxy|proxy_http|headers|ssl|rewrite)_module' || true", comprobar=False)
+    ejecutar(cli, f"{s}apache2ctl -M 2>/dev/null | grep -E '(proxy|proxy_http|headers|ssl|rewrite|remoteip)_module' || true", comprobar=False)
     ejecutar(cli, "ls /etc/apache2/sites-enabled/", comprobar=False)
     ejecutar(cli, f"grep -ril 'ServerName[[:space:]]*{DOMINIO}' /etc/apache2/sites-enabled/ || echo 'ningún vhost con {DOMINIO}'", comprobar=False)
     # Sin archivos, `grep -r` buscaría en el directorio actual: se comprueba antes.
@@ -60,10 +76,10 @@ def app(cli, s: str, ref: str, datos: dict[str, str]) -> None:
     remoto_tar = f"/tmp/{tar.name}"
     print(f"sftp {tar.name} -> {remoto_tar}")
     sftp.put(str(tar), remoto_tar)
-    print(f"sftp .env (sin VPS_*) -> {DIR_REMOTO}/shared/.env")
+    print(f"sftp .env (sin VPS_*, con ajustes de {DOMINIO}) -> {DIR_REMOTO}/shared/.env")
     with sftp.open("/tmp/project-ai-role.env", "w") as f:
         f.chmod(0o600)  # antes de escribir la clave de NVIDIA
-        f.write(env_para_servidor(datos).encode("utf-8"))
+        f.write(env_produccion(datos).encode("utf-8"))
     sftp.close()
     ejecutar(cli, f"{s}install -m 600 /tmp/project-ai-role.env {DIR_REMOTO}/shared/.env && rm -f /tmp/project-ai-role.env")
     ejecutar(cli, f"{s}tar -xzf {remoto_tar} -C {rel} && rm -f {remoto_tar} && {s}ln -sfn {DIR_REMOTO}/shared/.env {rel}/.env")
@@ -86,6 +102,10 @@ def vhost(cli, s: str, reemplazar: bool) -> None:
     sftp = cli.open_sftp()
     sftp.putfo(io.BytesIO(VHOST_LOCAL.read_bytes().replace(b"\r\n", b"\n")), f"/tmp/{DOMINIO}.conf")
     sftp.close()
+    # Copia del vhost actual: si el nuevo no pasa configtest se restaura el anterior
+    # y el sitio sigue sirviéndose (en vez de caer al vhost por defecto).
+    copia = f"{VHOST_REMOTO}.anterior"
+    habia_anterior = ejecutar(cli, f"{s}cp -p {VHOST_REMOTO} {copia}", comprobar=False)[0] == 0
     ejecutar(cli, f"{s}install -m 644 /tmp/{DOMINIO}.conf {VHOST_REMOTO} && rm -f /tmp/{DOMINIO}.conf")
     ejecutar(cli, f"{s}a2enmod {' '.join(MODULOS)}")
     for o in otros:
@@ -93,10 +113,15 @@ def vhost(cli, s: str, reemplazar: bool) -> None:
     ejecutar(cli, f"{s}a2ensite {DOMINIO}")
     codigo, _ = ejecutar(cli, f"{s}apache2ctl configtest", comprobar=False)
     if codigo != 0:
-        ejecutar(cli, f"{s}a2dissite {DOMINIO}", comprobar=False)
+        if habia_anterior:
+            ejecutar(cli, f"{s}mv -f {copia} {VHOST_REMOTO}", comprobar=False)
+        else:
+            ejecutar(cli, f"{s}a2dissite {DOMINIO}", comprobar=False)
         for o in otros:
             ejecutar(cli, f"{s}a2ensite {Path(o).name}", comprobar=False)
-        sys.exit("configtest falló: vhost desactivado y anteriores restaurados; Apache no se recargó.")
+        ejecutar(cli, f"{s}apache2ctl configtest", comprobar=False)
+        sys.exit("configtest falló: se restauró la configuración anterior; Apache no se recargó.")
+    ejecutar(cli, f"{s}rm -f {copia}", comprobar=False)
     ejecutar(cli, f"{s}systemctl reload apache2")
     cert = f"/etc/letsencrypt/live/{DOMINIO}/fullchain.pem"
     if ejecutar(cli, f"test -f {cert}", comprobar=False)[0] != 0:
@@ -120,6 +145,8 @@ def humo(cli) -> None:
     ejecutar(cli, f"curl -sS http://127.0.0.1:{PUERTO_LOCAL}/api/health; echo", comprobar=False)
     ejecutar(cli, f"curl -sS -o /dev/null -w 'público %{{http_code}}\\n' https://{DOMINIO}/", comprobar=False)
     ejecutar(cli, f"curl -sS https://{DOMINIO}/api/health; echo", comprobar=False)
+    ejecutar(cli, f"curl -sSI https://{DOMINIO}/ | grep -iE '^(strict-transport|content-security|x-frame|x-content|referrer|permissions)' "
+                  "|| echo 'sin cabeceras de seguridad en el HTML'", comprobar=False)
 
 
 def main() -> None:
@@ -135,7 +162,8 @@ def main() -> None:
     if a.dry_run:
         print(f"[dry-run] {a.accion} en {usuario}@{host} por clave; ref={a.ref}; dir={DIR_REMOTO}")
         if a.accion == "app":
-            print(f"[dry-run] .env remoto con claves: {[k for k in datos if not k.startswith('VPS_')]}")
+            claves = [linea.split("=", 1)[0] for linea in env_produccion(datos).splitlines()]
+            print(f"[dry-run] .env remoto con claves: {claves}")
         return
     cli = conectar_con_clave(usuario, host)
     s = sudo(usuario)
