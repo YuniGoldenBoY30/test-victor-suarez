@@ -75,6 +75,17 @@ Accesibilidad: etiquetas, teclado, contraste, `aria-live` en resultados y errore
 
 `.env` no se copia ni se incorpora a ninguna imagen.
 
+### 3.5 Despliegue en el VPS (Apache)
+
+| Archivo / elemento | Contenido |
+|---|---|
+| `deploy/apache/test.zenixtech.ai.conf` | vhost de Apache 2.4: el puerto 80 redirige a HTTPS; el 443 con `mod_ssl` hace `ProxyPass / http://127.0.0.1:8080/` con `ProxyPreserveHost On`, `X-Forwarded-Proto https` y `ProxyTimeout 60`. |
+| `docker-compose.yml` | En el VPS el puerto del frontend debe publicarse solo en loopback: `127.0.0.1:8080:80`. |
+| Módulos de Apache | `proxy`, `proxy_http`, `headers`, `ssl`, `rewrite`. |
+| Credenciales | `VPS_PROD_USER`, `VPS_PROD_HOST` y `VPS_PROD_PASSWORD` solo en `.env` local; despliegue por clave SSH. |
+
+Detalle en `docs/DESPLIEGUE.md`.
+
 ## 4. Modelo de datos
 
 CSV `data/pedidos_raw.csv`, columnas exactas y en este orden: `fecha,cliente,pais,producto,importe,estado`.

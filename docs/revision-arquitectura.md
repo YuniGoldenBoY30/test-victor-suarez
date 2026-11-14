@@ -41,6 +41,11 @@ Decisiones (ADR), trade-offs, riesgos y listas de comprobación. Complementa a `
 - **Decisión:** no hay identificador de pedido; se deduplica tras normalizar.
 - **Consecuencia:** dos pedidos legítimos idénticos se colapsan; se acepta y se documenta.
 
+### ADR-9. Apache como proxy inverso en el VPS
+- **Decisión:** en el VPS de pruebas (`test.zenixtech.ai`) se reutiliza el Apache 2.4 que ya existe como proxy inverso de entrada (TLS y vhost), delante del nginx del contenedor frontend publicado en `127.0.0.1:8080`.
+- **Consecuencias:** las imágenes son las mismas en local y en el VPS; Apache convive con otros vhost del servidor sin ceder los puertos 80/443 a Docker. Hay un salto de proxy más (Apache → nginx), con un coste despreciable.
+- **Alternativa:** sustituir Apache por nginx o Traefik en el host (rompería los sitios que ya sirve Apache), o publicar el contenedor directamente en 80/443.
+
 ## 2. Trade-offs
 
 | Decisión | Se gana | Se pierde |
@@ -86,6 +91,7 @@ Decisiones (ADR), trade-offs, riesgos y listas de comprobación. Complementa a `
 
 ## 6. Puntos abiertos
 
-- Autenticación y límite de tasa si el servicio se expusiera.
+- Autenticación y límite de tasa si el servicio se expusiera. Es urgente en `test.zenixtech.ai`, que es público (ver `docs/DESPLIEGUE.md`).
+- `test.zenixtech.ai` ya sirve otra aplicación: hay que decidir si se sustituye o se usa otro subdominio.
 - Registro de auditoría de las preguntas y el SQL generado (sin la clave).
 - Mejora de la regla de mes sin año con aclaración al usuario.

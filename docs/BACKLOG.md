@@ -176,4 +176,4 @@ Criterios:
 - Llamadas reales al LLM en tests.
 - Archivos Excel.
 - Pipelines de CI.
-- Despliegue en la nube.
+- Despliegue en nube gestionada (PaaS, Kubernetes). El despliegue de pruebas se hace en un VPS propio con Apache como proxy inverso (`test.zenixtech.ai`, ver `docs/DESPLIEGUE.md`).
