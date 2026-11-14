@@ -91,6 +91,7 @@ Notas para Docker Desktop en Windows:
 
 - Si el build pide "additional privileges", ejecuta antes en PowerShell `$env:BUILDX_BAKE_ENTITLEMENTS_FS=0` y vuelve a lanzar el comando.
 - La base de datos vive en un volumen. Para regenerarla, ejecuta `docker compose down -v` y después `docker compose up --build`.
+- Hosts permitidos: el backend solo acepta las cabeceras `Host` de `TRUSTED_HOSTS` (por defecto `localhost,127.0.0.1,test.zenixtech.ai`). Otro host responde 400. Para cambiarlo, define `TRUSTED_HOSTS` en el entorno del shell antes de `docker compose up` (o en el `.env` de la raíz, que usa Compose para interpolar); no hace falta editar `docker-compose.yml`.
 
 ### Despliegue en el VPS
 

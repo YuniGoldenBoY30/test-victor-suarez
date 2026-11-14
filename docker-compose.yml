@@ -5,6 +5,8 @@ services:
     environment:
       # Ruta fija dentro del contenedor (sobrescribe el valor de .env)
       DUCKDB_PATH: /app/data/pedidos.duckdb
+      # Hosts aceptados por la API (TrustedHostMiddleware). Sobrescribible con TRUSTED_HOSTS.
+      TRUSTED_HOSTS: "${TRUSTED_HOSTS:-localhost,127.0.0.1,test.zenixtech.ai}"
     volumes:
       - datos:/app/data
     # Sin puertos publicados: solo accesible desde el frontend
