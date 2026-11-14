@@ -5,9 +5,11 @@ vale para un único proceso (el despliegue actual: un worker de uvicorn). Con va
 workers o varias réplicas cada proceso contaría por su cuenta y haría falta un almacén
 compartido (por ejemplo Redis), que queda fuera de alcance.
 """
+import hashlib
 import ipaddress
 import logging
 import math
+import secrets
 import threading
 import time
 from collections import deque
@@ -26,6 +28,14 @@ CODIGO_LIMITE_DIARIO = "limite_diario"
 
 # Clave de reserva cuando ni la cabecera ni la conexión TCP dan una dirección.
 CLIENTE_DESCONOCIDO = "desconocido"
+
+# Sal por proceso: el identificador de los logs no permite volver a la IP y no sirve entre reinicios.
+_SAL_LOG = secrets.token_bytes(16)
+
+
+def identificador_registro(cliente: str) -> str:
+    """Identificador corto y no reversible de un cliente para los logs (nunca la IP cruda)."""
+    return hashlib.sha256(_SAL_LOG + cliente.encode()).hexdigest()[:12]
 
 
 class LimiteExcedidoError(ErrorAplicacion):
@@ -111,6 +121,9 @@ class LimitadorConsultas:
         self._dia = int(reloj() // SEGUNDOS_DIA)
         self._usadas_dia = 0
         self._proxima_purga = reloj() + SEGUNDOS_MINUTO
+        # Hasta cuándo ya se avisó de cada cliente bloqueado, y el último día con aviso diario.
+        self._avisados: dict[str, float] = {}
+        self._dia_avisado: int | None = None
 
     @staticmethod
     def _espera(marcas: deque[float], ahora: float, ventana: int, limite: int) -> float:
@@ -131,6 +144,8 @@ class LimitadorConsultas:
         if ahora < self._proxima_purga:
             return
         self._proxima_purga = ahora + SEGUNDOS_MINUTO
+        for cliente in [c for c, hasta in self._avisados.items() if hasta <= ahora]:
+            del self._avisados[cliente]
         for cliente in list(self._marcas):
             marcas = self._marcas[cliente]
             self._podar(marcas, ahora)
@@ -154,7 +169,13 @@ class LimitadorConsultas:
             )
             if espera > 0:
                 segundos = _segundos_enteros(espera)
-                logger.warning("Límite de consultas por cliente superado (cliente=%s)", cliente)
+                # Un aviso por cliente y ventana: el abuso repetido no inunda los logs.
+                if ahora >= self._avisados.get(cliente, 0.0):
+                    self._avisados[cliente] = ahora + espera
+                    logger.warning(
+                        "Límite de consultas por cliente superado (cliente=%s)",
+                        identificador_registro(cliente),
+                    )
                 raise LimiteExcedidoError(
                     CODIGO_LIMITE_PETICIONES,
                     "Demasiadas consultas desde su dirección. "
@@ -167,7 +188,9 @@ class LimitadorConsultas:
                 self._dia, self._usadas_dia = dia, 0
             if self.por_dia and self._usadas_dia >= self.por_dia:
                 segundos = _segundos_enteros((dia + 1) * SEGUNDOS_DIA - ahora)
-                logger.warning("Tope diario global de consultas alcanzado")
+                if self._dia_avisado != dia:
+                    self._dia_avisado = dia
+                    logger.warning("Tope diario global de consultas alcanzado")
                 raise LimiteExcedidoError(
                     CODIGO_LIMITE_DIARIO,
                     "Se alcanzó el límite diario de consultas del servicio. "

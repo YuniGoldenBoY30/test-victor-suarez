@@ -1,4 +1,5 @@
 """Límites de POST /consulta: ventana por cliente, tope diario global e IP del cliente."""
+import logging
 import threading
 from datetime import datetime, timezone
 
@@ -14,6 +15,7 @@ from app.limites import (
     CODIGO_LIMITE_PETICIONES,
     LimiteExcedidoError,
     LimitadorConsultas,
+    identificador_registro,
     normalizar_cliente,
     resolver_ip_cliente,
 )
@@ -222,6 +224,49 @@ def test_humo_de_concurrencia_por_cliente():
     for h in hilos:
         h.join()
     assert len(aceptadas) == 7
+
+
+def test_rechazos_por_cliente_se_registran_una_vez_por_ventana(caplog):
+    caplog.set_level(logging.WARNING)
+    reloj = Reloj()
+    lim = LimitadorConsultas(1, 0, 0, reloj)
+    lim.registrar("a")
+    for _ in range(20):
+        _rechazo(lim)
+    avisos = [r for r in caplog.records if "por cliente" in r.getMessage()]
+    assert len(avisos) == 1
+    reloj.avanzar(60)
+    lim.registrar("a")
+    for _ in range(5):
+        _rechazo(lim)
+    avisos = [r for r in caplog.records if "por cliente" in r.getMessage()]
+    assert len(avisos) == 2
+
+
+def test_los_logs_no_contienen_la_ip_cruda(caplog):
+    caplog.set_level(logging.WARNING)
+    lim = LimitadorConsultas(1, 0, 0, Reloj())
+    lim.registrar("198.51.100.7")
+    _rechazo(lim, "198.51.100.7")
+    assert "198.51.100.7" not in caplog.text
+    assert identificador_registro("198.51.100.7") in caplog.text
+
+
+def test_aviso_del_tope_diario_una_vez_por_dia_utc(caplog):
+    caplog.set_level(logging.WARNING)
+    reloj = Reloj(MEDIANOCHE - 10)
+    lim = LimitadorConsultas(0, 0, 1, reloj)
+    lim.registrar("a")
+    for _ in range(5):
+        _rechazo(lim, "b")
+    avisos = [r for r in caplog.records if "diario" in r.getMessage()]
+    assert len(avisos) == 1
+    reloj.avanzar(10)
+    lim.registrar("b")
+    _rechazo(lim, "c")
+    _rechazo(lim, "c")
+    avisos = [r for r in caplog.records if "diario" in r.getMessage()]
+    assert len(avisos) == 2
 
 
 # --- IP del cliente ---------------------------------------------------------------------
