@@ -212,7 +212,7 @@ CORS: `CORSMiddleware` con `settings.cors_origins`.
 | Variable | Campo de `Settings` | Defecto | Notas |
 |---|---|---|---|
 | `API_IA_NVIDIA` | `api_ia_nvidia` | sin valor | `SecretStr`, opcional; nunca se registra ni se devuelve. |
-| `NVIDIA_MODEL` | `nvidia_model` | `meta/llama-3.3-70b-instruct` | |
+| `NVIDIA_MODEL` | `nvidia_model` | `nvidia/nemotron-3-ultra-550b-a55b` | Modelo por defecto (el modelo anterior fue retirado y devuelve 410 Gone). Alternativa: `google/gemma-4-31b-it` |
 | (sin variable) | `nvidia_base_url` | `https://integrate.api.nvidia.com/v1` | |
 | (sin variable) | `llm_timeout` | `30` | segundos |
 | `DUCKDB_PATH` | `duckdb_path` | `data/pedidos.duckdb` | |
