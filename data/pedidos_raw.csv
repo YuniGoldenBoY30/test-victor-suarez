@@ -1,0 +1,1051 @@
+fecha,cliente,pais,producto,importe,estado
+2025-03-07,Cliente 152,Italia,PROD-007,902.07,cancelado
+2024/05/14,Cliente 043,  francia ,PROD-047,,cancelado
+26/02/2025,Cliente 189,Portugal,PROD-047,1841.84,completado
+12-05-2024,Cliente 102,MEXICO,PROD-032,1945.22,completado
+2025-05-14,Cliente 059,Francia,PROD-048,1266.01,completado
+2024-05-23,Cliente 020,Alemania,PROD-022,116.86,cancelado
+2024-04-18,Cliente 110,Portugal,PROD-022,448.94,cancelado
+30/03/2024,Cliente 007,Portugal,PROD-006,1113.93,pendiente
+2025-04-04,Cliente 129,España,PROD-002,970.81,enviado
+10/03/2025,Cliente 032,Italia,PROD-030,234.56,completado
+03-03-2025,Cliente 141,DEUTSCHLAND,PROD-042,1143.88,pendiente
+2024/08/15,Cliente 079,España,PROD-038,359.71,cancelado
+2024/03/06,Cliente 078,ES,PROD-006,1924.26,enviado
+14-02-2025,Cliente 020,México,PROD-002,177.24,completado
+2024-04-01,Cliente 193,  de ,PROD-009,282.89,enviado
+2024-08-14,Cliente 105,Italia,PROD-008,,enviado
+2024-02-30,Cliente 149,México,PROD-043,303.26,enviado
+2025/04/11,Cliente 155,  francia ,PROD-027,744.97,completado
+30-06-2025,Cliente 026,Alemania,PROD-047,1030.50,cancelado
+2025-06-30,Cliente 186,Italia,PROD-036,1399.87,pendiente
+11-10-2024,Cliente 199,Italia,PROD-047,"661,31",completado
+2025/06/28,Cliente 183,Francia,PROD-010,525.53,enviado
+05-04-2025,Cliente 011,FRANCE,PROD-005,760.56,enviado
+14-02-2025,Cliente 042,Portugal,PROD-025,1397.14,completado
+07-04-2024,Cliente 161,Portugal,PROD-043,1020.01,enviado
+22/11/2024,Cliente 087,Portugal,PROD-033,1481.25,cancelado
+2025-05-26,Cliente 154,Portugal,PROD-021,351.20,cancelado
+2025-03-13,Cliente 025,México,PROD-002,1253.93,enviado
+2025-05-14,Cliente 028,Portugal,PROD-001,926.10,pendiente
+2025/01/31,Cliente 196,Francia,PROD-001,"394,59",pendiente
+2025/02/06,Cliente 075,Portugal,PROD-026,1014.41,enviado
+2024-01-02,Cliente 110,México,PROD-049,"672,48",pendiente
+16-05-2025,Cliente 104,Francia,PROD-002,1896.69,enviado
+03/01/2025,Cliente 092,Alemania,PROD-050,1756.99,pendiente
+2024/06/29,Cliente 125,México,PROD-020,1038.84,pendiente
+01-02-2025,Cliente 135,Italia,PROD-045,366.21,cancelado
+14-01-2025,Cliente 102,España,PROD-021,1152.10,pendiente
+16-07-2024,Cliente 190,  méxico ,PROD-031,1383.43,pendiente
+05-02-2024,Cliente 181,México,PROD-037,255.69,cancelado
+2024/09/27,Cliente 077,FR,PROD-050,604.01,pendiente
+03/05/2024,Cliente 168,Alemania,PROD-021,"653,50",completado
+2024/04/10,Cliente 154,  portugal ,PROD-035,"1821,07",cancelado
+2024-05-13,Cliente 157,  espana ,PROD-011,"1643,27",completado
+2024-09-28,Cliente 084,  germany ,PROD-010,"1396,79",completado
+2025-02-05,Cliente 181,Italia,PROD-020,1238.55,completado
+2025/01/26,Cliente 170,Italia,PROD-035,757.53,enviado
+01-02-2024,Cliente 156,México,PROD-025,1073.20,enviado
+15/05/2024,Cliente 079,España,PROD-046,455.30,pendiente
+19-05-2025,Cliente 111,Francia,PROD-010,188.40,pendiente
+14-11-2024,Cliente 059,México,PROD-009,1372.86,pendiente
+23/02/2025,Cliente 085,ALEMANIA,PROD-044,1388.48,cancelado
+2025/04/20,Cliente 126,España,PROD-039,1365.54,cancelado
+2024/12/21,Cliente 121,España,PROD-023,331.05,cancelado
+28/04/2025,Cliente 021,Italia,PROD-002,"902,72",pendiente
+16/02/2024,Cliente 066,México,PROD-040,1487.60,enviado
+17/05/2024,Cliente 055,Portugal,PROD-012,1897.48,enviado
+31/01/2025,Cliente 068,Italia,PROD-029,745.11,cancelado
+2024/12/30,Cliente 045,México,PROD-002,604.69,cancelado
+05-04-2025,Cliente 041,  italia ,PROD-025,,cancelado
+2024/11/30,Cliente 098,Portugal,PROD-044,263.30,enviado
+20/01/2024,Cliente 091,Alemania,PROD-005,1601.08,enviado
+08/03/2024,Cliente 046,Italia,PROD-019,183.74,completado
+15-13-2024,Cliente 071,Italia,PROD-035,33.58,pendiente
+04/05/2024,Cliente 051,Italia,PROD-030,501.85,completado
+15-06-2025,Cliente 081,Italia,PROD-034,288.31,pendiente
+2024/11/04,Cliente 149,España,PROD-039,614.71,pendiente
+18/12/2024,Cliente 079,Francia,PROD-001,1860.73,enviado
+29/04/2025,Cliente 111,Italia,PROD-023,"388,92",cancelado
+2024/10/20,Cliente 094,Portugal,PROD-033,1835.11,pendiente
+2024/11/24,Cliente 073,España,PROD-002,777.89,pendiente
+2025/03/11,Cliente 006,México,PROD-037,1079.83,completado
+2025-04-07,Cliente 043,  it ,PROD-001,1245.25,completado
+28-02-2025,Cliente 006,  italia ,PROD-036,1769.84,enviado
+2024-04-21,Cliente 181,México,PROD-019,1213.51,cancelado
+12-08-2024,Cliente 076,México,PROD-047,1317.35,cancelado
+20-06-2024,Cliente 179,México,PROD-045,1601.76,pendiente
+21-05-2025,Cliente 153,FRANCE,PROD-045,524.12,pendiente
+28/02/2024,Cliente 023,México,PROD-039,252.36,enviado
+2024/08/25,Cliente 149,Alemania,PROD-007,922.33,enviado
+2024/11/02,Cliente 107,Alemania,PROD-038,669.17,pendiente
+2024/01/10,Cliente 117,Alemania,PROD-010,1676.06,pendiente
+12-04-2025,Cliente 092,  italia ,PROD-037,222.24,pendiente
+2025/01/04,Cliente 034,  italy ,PROD-031,"173,07",enviado
+30-06-2025,Cliente 114,Italia,PROD-020,1083.94,pendiente
+2024-13-05,Cliente 160,Francia,PROD-026,938.73,completado
+2024-02-25,Cliente 127,Francia,PROD-011,1016.08,completado
+2024/11/22,Cliente 004,Alemania,PROD-040,307.15,completado
+2024-08-21,Cliente 085,DE,PROD-017,408.61,pendiente
+2024-10-02,Cliente 135,España,PROD-005,676.67,pendiente
+30/03/2025,Cliente 147,DEUTSCHLAND,PROD-028,"1885,14",cancelado
+2025-02-14,Cliente 198,Alemania,PROD-026,512.27,completado
+2025/01/13,Cliente 150,Portugal,PROD-032,1559.86,cancelado
+13-02-2025,Cliente 149,España,PROD-017,1755.31,completado
+2024-01-06,Cliente 053,España,PROD-045,1044.33,pendiente
+2025-06-28,Cliente 199,  esp ,PROD-044,"1083,18",cancelado
+2024/04/22,Cliente 058,SPAIN,PROD-018,673.70,completado
+2024-07-03,Cliente 015,México,PROD-001,1973.41,cancelado
+2024/06/25,Cliente 068,España,PROD-014,"43,21",completado
+07-06-2024,Cliente 159,Francia,PROD-022,"323,82",completado
+2024-03-23,Cliente 180,ITALIA,PROD-011,957.25,completado
+2025-01-24,Cliente 187,Alemania,PROD-030,1211.41,completado
+2024/08/01,Cliente 187,Alemania,PROD-003,1873.07,completado
+2024-05-26,Cliente 186,Portugal,PROD-003,1356.67,cancelado
+25-07-2024,Cliente 162,Italia,PROD-046,"111,34",cancelado
+16-06-2024,Cliente 097,  españa ,PROD-026,1155.84,enviado
+2024/07/06,Cliente 110,Italia,PROD-034,1009.44,enviado
+05/06/2025,Cliente 062,Alemania,PROD-032,1295.88,cancelado
+09/01/2024,Cliente 106,México,PROD-040,433.98,cancelado
+12/02/2025,Cliente 035,España,PROD-021,508.71,cancelado
+17-06-2025,Cliente 097,Alemania,PROD-042,1161.48,cancelado
+26/01/2025,Cliente 155,Portugal,PROD-022,313.97,cancelado
+2024-08-18,Cliente 077,Francia,PROD-043,1714.99,enviado
+2024-09-29,Cliente 133,Alemania,PROD-007,165.09,completado
+20/05/2025,Cliente 066,Portugal,PROD-042,159.35,enviado
+03-05-2025,Cliente 193,España,PROD-018,528.96,pendiente
+30-09-2024,Cliente 185,ITALY,PROD-017,16.46,enviado
+2024-02-16,Cliente 132,  deutschland ,PROD-009,1043.47,pendiente
+06/12/2024,Cliente 184,Portugal,PROD-048,138.69,cancelado
+2025/06/06,Cliente 145,Italia,PROD-004,272.57,cancelado
+2024/02/10,Cliente 113,México,PROD-026,1925.56,pendiente
+2024/09/21,Cliente 005,España,PROD-017,752.67,enviado
+2024-04-08,Cliente 172,Francia,PROD-023,1179.33,completado
+2024/06/07,Cliente 112,México,PROD-006,1054.11,cancelado
+2024/12/18,Cliente 010,México,PROD-012,976.31,pendiente
+2024/04/10,Cliente 188,España,PROD-027,"1121,39",enviado
+2025-06-11,Cliente 194,Italia,PROD-008,1599.98,completado
+03/07/2024,Cliente 161,Francia,PROD-008,"13,15",enviado
+2024-11-11,Cliente 014,Portugal,PROD-045,79.27,enviado
+2024-05-20,Cliente 122,Francia,PROD-031,819.75,enviado
+2024-03-10,Cliente 121,Francia,PROD-018,1430.03,enviado
+29/11/2024,Cliente 106,Alemania,PROD-013,463.29,cancelado
+19-06-2025,Cliente 178,GERMANY,PROD-010,1631.00,enviado
+21-04-2025,Cliente 128,Italia,PROD-021,870.69,pendiente
+31/01/2025,Cliente 068,Italia,PROD-029,745.11,cancelado
+17-10-2024,Cliente 088,Francia,PROD-044,,completado
+22/02/2025,Cliente 058,Francia,PROD-020,1511.29,enviado
+2024-09-05,Cliente 031,Alemania,PROD-037,1702.08,completado
+2025-04-25,Cliente 026,Italia,PROD-032,1145.00,completado
+27-06-2025,Cliente 176,México,PROD-020,856.24,pendiente
+2024-01-08,Cliente 195,  pt ,PROD-018,757.57,cancelado
+26/04/2024,Cliente 197,FR,PROD-003,1987.39,pendiente
+10-02-2025,Cliente 180,Portugal,PROD-040,921.73,cancelado
+2024/10/19,Cliente 037,  germany ,PROD-030,118.55,cancelado
+2024-07-03,Cliente 055,Portugal,PROD-043,1726.79,cancelado
+2024/02/29,Cliente 026,Portugal,PROD-016,1999.22,enviado
+2024/03/21,Cliente 115,Portugal,PROD-021,901.72,completado
+11/04/2024,Cliente 079,Francia,PROD-027,"518,55",enviado
+2024/12/12,Cliente 014,ESPAÑA,PROD-006,1354.24,cancelado
+2025/03/05,Cliente 112,México,PROD-023,1569.88,cancelado
+2025-02-23,Cliente 089,  deutschland ,PROD-009,905.45,enviado
+25-10-2024,Cliente 127,Francia,PROD-050,933.21,enviado
+18-07-2024,Cliente 141,España,PROD-018,778.83,completado
+08/07/2024,Cliente 080,  portugal ,PROD-011,369.01,enviado
+2024-09-22,Cliente 044,España,PROD-042,21.64,cancelado
+2024-11-16,Cliente 131,España,PROD-025,374.26,cancelado
+2024-05-20,Cliente 043,  de ,PROD-024,1568.14,enviado
+2025/06/13,Cliente 151,FR,PROD-015,51.86,completado
+2024-06-15,Cliente 052,MX,PROD-041,1820.28,completado
+30-06-2025,Cliente 007,Italia,PROD-025,1618.53,enviado
+19/01/2025,Cliente 087,Portugal,PROD-039,1884.25,cancelado
+2025-06-19,Cliente 013,Alemania,PROD-050,893.53,cancelado
+2024/07/18,Cliente 182,  deutschland ,PROD-020,1164.96,cancelado
+2025/06/28,Cliente 143,  pt ,PROD-048,1144.36,cancelado
+23-11-2024,Cliente 014,Portugal,PROD-012,751.89,enviado
+2025-06-08,Cliente 054,Alemania,PROD-035,1128.49,cancelado
+05-02-2024,Cliente 181,México,PROD-037,255.69,cancelado
+2024/03/21,Cliente 021,Francia,PROD-021,1095.49,pendiente
+2024/04/18,Cliente 092,  france ,PROD-046,1664.68,cancelado
+23/07/2024,Cliente 127,España,PROD-020,1589.03,enviado
+2024-09-14,Cliente 116,Francia,PROD-041,1822.86,cancelado
+2025/01/27,Cliente 143,  méxico ,PROD-011,1294.07,cancelado
+2024/04/20,Cliente 118,Italia,PROD-023,452.64,pendiente
+14/02/2024,Cliente 086,  italy ,PROD-006,639.32,completado
+2024/11/04,Cliente 063,  it ,PROD-014,969.52,enviado
+2024-01-08,Cliente 195,  pt ,PROD-018,757.57,cancelado
+2025-02-18,Cliente 177,Francia,PROD-024,1604.63,completado
+23/04/2025,Cliente 184,España,PROD-047,140.84,cancelado
+04/03/2025,Cliente 165,Portugal,PROD-031,285.41,pendiente
+2024-02-22,Cliente 034,Alemania,PROD-041,97.73,pendiente
+2024-08-02,Cliente 044,ITALIA,PROD-036,561.92,enviado
+31/03/2024,Cliente 176,México,PROD-041,1330.84,pendiente
+2024-11-06,Cliente 044,Francia,PROD-043,1187.70,pendiente
+27-01-2024,Cliente 002,  alemania ,PROD-012,624.88,enviado
+2025-05-07,Cliente 113,Alemania,PROD-028,802.51,cancelado
+2024-06-06,Cliente 176,Italia,PROD-039,1474.42,enviado
+2025/02/18,Cliente 177,Portugal,PROD-044,727.85,cancelado
+18/01/2025,Cliente 036,  es ,PROD-003,1303.42,pendiente
+2024/07/26,Cliente 194,México,PROD-038,1412.21,enviado
+2025/03/24,Cliente 057,México,PROD-009,71.33,cancelado
+2025-03-24,Cliente 146,  fr ,PROD-003,738.99,enviado
+2024-03-03,Cliente 114,México,PROD-004,139.41,pendiente
+2025-05-15,Cliente 015,  de ,PROD-016,1665.01,completado
+2024/04/30,Cliente 050,  mexico ,PROD-033,1245.10,completado
+28-10-2024,Cliente 016,  mx ,PROD-041,1456.67,cancelado
+2025/04/10,Cliente 048,Alemania,PROD-014,689.26,enviado
+2024-06-21,Cliente 199,España,PROD-023,1065.90,pendiente
+2024/03/25,Cliente 103,España,PROD-033,1100.82,cancelado
+2024/05/15,Cliente 024,  france ,PROD-004,858.34,cancelado
+2024/07/18,Cliente 130,Portugal,PROD-007,19.26,completado
+08/04/2025,Cliente 180,  mx ,PROD-036,1499.37,pendiente
+25-01-2025,Cliente 014,ESPAÑA,PROD-041,988.37,enviado
+2024/03/24,Cliente 016,Alemania,PROD-036,165.42,enviado
+2024-07-11,Cliente 026,ITALY,PROD-047,1819.17,enviado
+15-13-2024,Cliente 091,ESPANA,PROD-039,1862.82,completado
+2024/06/01,Cliente 053,Italia,PROD-044,1234.99,pendiente
+27/02/2024,Cliente 045,Italia,PROD-012,716.06,enviado
+22-05-2025,Cliente 174,ITALIA,PROD-032,1186.17,enviado
+2025/04/05,Cliente 128,Francia,PROD-047,"855,30",enviado
+29-07-2024,Cliente 094,México,PROD-028,685.68,enviado
+2024-06-30,Cliente 018,Portugal,PROD-025,982.34,pendiente
+19-12-2024,Cliente 166,España,PROD-020,1325.87,completado
+2025-06-19,Cliente 013,Alemania,PROD-050,893.53,cancelado
+2025-03-30,Cliente 155,Francia,PROD-049,129.40,enviado
+2024/11/03,Cliente 069,España,PROD-019,1271.52,enviado
+31-03-2025,Cliente 048,Portugal,PROD-002,1931.40,enviado
+01-06-2024,Cliente 153,España,PROD-048,128.68,pendiente
+2025-06-18,Cliente 120,  espana ,PROD-003,"1192,63",completado
+2024-11-30,Cliente 097,Italia,PROD-028,986.30,enviado
+2024-05-17,Cliente 046,  espana ,PROD-025,"1001,29",pendiente
+2024-03-22,Cliente 010,PORTUGAL,PROD-016,311.82,cancelado
+14/04/2024,Cliente 015,Italia,PROD-007,1362.10,pendiente
+2025/01/23,Cliente 183,Francia,PROD-006,588.00,pendiente
+30/01/2025,Cliente 081,Portugal,PROD-032,"1953,46",completado
+20-01-2025,Cliente 176,México,PROD-034,1408.63,completado
+08/06/2025,Cliente 172,  fr ,PROD-037,512.96,completado
+2024/10/23,Cliente 119,  germany ,PROD-015,614.79,completado
+2025-01-24,Cliente 176,Italia,PROD-041,1406.72,completado
+2025/02/27,Cliente 015,México,PROD-048,94.92,enviado
+2024-08-28,Cliente 116,España,PROD-022,1801.24,pendiente
+15-13-2024,Cliente 052,Francia,PROD-001,243.93,pendiente
+09-03-2025,Cliente 170,México,PROD-039,1868.51,enviado
+18/01/2025,Cliente 024,Italia,PROD-028,143.60,completado
+31/04/2024,Cliente 113,Portugal,PROD-007,670.67,cancelado
+14-02-2025,Cliente 045,Portugal,PROD-041,124.35,cancelado
+05-06-2024,Cliente 057,Italia,PROD-046,345.59,cancelado
+18-01-2025,Cliente 133,Francia,PROD-023,1505.73,enviado
+06-06-2024,Cliente 064,Italia,PROD-005,764.09,pendiente
+05/04/2024,Cliente 070,Francia,PROD-037,1671.56,enviado
+24-09-2024,Cliente 009,Portugal,PROD-028,1097.77,completado
+13/02/2024,Cliente 012,  pt ,PROD-005,943.47,pendiente
+2024-05-17,Cliente 054,Alemania,PROD-045,665.12,enviado
+30/10/2024,Cliente 081,Portugal,PROD-004,"1474,12",completado
+19-09-2024,Cliente 036,México,PROD-003,1245.49,completado
+21/04/2024,Cliente 041,México,PROD-022,495.39,cancelado
+11-11-2024,Cliente 061,Alemania,PROD-024,833.60,cancelado
+2024/11/05,Cliente 149,Francia,PROD-012,1936.44,pendiente
+30/12/2024,Cliente 077,  de ,PROD-006,507.22,cancelado
+2024/07/18,Cliente 193,Francia,PROD-050,303.67,completado
+2024-06-25,Cliente 157,Italia,PROD-011,1982.06,pendiente
+2024/08/21,Cliente 081,Italia,PROD-028,803.47,pendiente
+2024-07-23,Cliente 140,Alemania,PROD-031,,pendiente
+17-03-2024,Cliente 081,Portugal,PROD-002,1319.64,enviado
+2024-07-02,Cliente 161,  pt ,PROD-047,1190.85,cancelado
+01/07/2024,Cliente 147,Portugal,PROD-036,1325.24,enviado
+05-04-2025,Cliente 164,Portugal,PROD-033,"740,55",cancelado
+28/05/2024,Cliente 113,Italia,PROD-047,1543.03,enviado
+04-09-2024,Cliente 092,Francia,PROD-010,1671.53,completado
+10-07-2024,Cliente 126,Italia,PROD-034,236.77,pendiente
+2024-04-08,Cliente 052,Portugal,PROD-019,1537.47,cancelado
+21-06-2025,Cliente 078,Francia,PROD-001,599.53,enviado
+2024/06/28,Cliente 001,México,PROD-045,596.09,cancelado
+02-04-2024,Cliente 139,Italia,PROD-024,359.52,pendiente
+29-05-2024,Cliente 070,México,PROD-024,279.64,cancelado
+2024-02-28,Cliente 174,Italia,PROD-011,732.99,completado
+05-04-2025,Cliente 011,FRANCE,PROD-005,760.56,enviado
+03-06-2025,Cliente 149,Alemania,PROD-043,1454.84,cancelado
+05/05/2025,Cliente 010,España,PROD-019,,enviado
+23/03/2025,Cliente 088,España,PROD-048,589.04,enviado
+05/11/2024,Cliente 200,Francia,PROD-013,233.34,completado
+2024/09/29,Cliente 109,Portugal,PROD-024,188.29,pendiente
+2025/02/27,Cliente 008,Portugal,PROD-029,1591.27,enviado
+18/04/2025,Cliente 154,Francia,PROD-017,109.07,enviado
+20-01-2024,Cliente 143,Portugal,PROD-042,1353.44,enviado
+18-03-2025,Cliente 150,Alemania,PROD-026,1606.61,cancelado
+21-02-2024,Cliente 041,Portugal,PROD-021,842.09,pendiente
+02/08/2024,Cliente 020,Italia,PROD-002,1384.73,cancelado
+2024/07/25,Cliente 184,  deutschland ,PROD-047,1815.25,completado
+26/09/2024,Cliente 020,Italia,PROD-036,1350.66,enviado
+2025/05/25,Cliente 036,Italia,PROD-027,131.35,enviado
+12-03-2024,Cliente 077,México,PROD-033,1697.55,pendiente
+29/03/2024,Cliente 086,Italia,PROD-005,1976.88,cancelado
+2024-12-18,Cliente 114,Francia,PROD-040,1975.43,enviado
+2024/08/19,Cliente 110,Italia,PROD-020,601.73,completado
+13-04-2024,Cliente 027,México,PROD-033,282.96,completado
+31/04/2024,Cliente 114,España,PROD-042,1286.33,enviado
+08/05/2024,Cliente 035,ESPAÑA,PROD-006,1770.93,enviado
+17-07-2024,Cliente 189,México,PROD-033,158.19,completado
+2025/01/28,Cliente 109,España,PROD-011,1041.89,cancelado
+2024-13-05,Cliente 176,Italia,PROD-021,838.97,completado
+2024-06-29,Cliente 022,Italia,PROD-021,"1566,65",pendiente
+23-10-2024,Cliente 181,  portugal ,PROD-015,359.63,pendiente
+20-01-2024,Cliente 138,Francia,PROD-025,"648,18",enviado
+15-03-2024,Cliente 156,España,PROD-006,586.77,pendiente
+2024/01/06,Cliente 145,Francia,PROD-046,1612.72,enviado
+2024/01/27,Cliente 189,Alemania,PROD-003,1814.75,enviado
+2024-10-11,Cliente 040,Francia,PROD-014,1399.30,pendiente
+27/02/2024,Cliente 096,ESP,PROD-004,62.43,completado
+2024-09-07,Cliente 039,Portugal,PROD-021,386.31,enviado
+20-06-2024,Cliente 011,Italia,PROD-038,"1580,40",cancelado
+01-10-2024,Cliente 193,España,PROD-030,565.07,cancelado
+09-03-2025,Cliente 125,GERMANY,PROD-013,436.24,enviado
+07/12/2024,Cliente 142,Portugal,PROD-014,418.36,enviado
+2024-02-25,Cliente 138,  deutschland ,PROD-029,227.45,enviado
+03/02/2024,Cliente 128,Portugal,PROD-010,449.58,pendiente
+21/08/2024,Cliente 198,FRANCE,PROD-018,"564,42",pendiente
+2024-08-10,Cliente 177,Italia,PROD-045,354.08,completado
+19-04-2025,Cliente 018,Italia,PROD-039,360.59,completado
+12-06-2025,Cliente 182,Portugal,PROD-033,"1585,07",cancelado
+2024-10-09,Cliente 161,Italia,PROD-002,309.49,pendiente
+2024/05/26,Cliente 146,  italia ,PROD-032,501.21,cancelado
+2025/04/18,Cliente 195,PT,PROD-004,1515.32,enviado
+27/03/2024,Cliente 177,Portugal,PROD-002,1445.15,pendiente
+15/03/2025,Cliente 047,España,PROD-013,1405.28,enviado
+13-08-2024,Cliente 191,  fr ,PROD-050,344.74,cancelado
+04/08/2024,Cliente 093,Francia,PROD-027,1115.29,enviado
+11/01/2025,Cliente 198,España,PROD-030,38.09,cancelado
+2024-12-14,Cliente 148,Alemania,PROD-017,1753.46,cancelado
+2025/02/04,Cliente 007,Portugal,PROD-031,1383.97,completado
+2025-04-17,Cliente 149,España,PROD-032,508.87,pendiente
+2024-06-09,Cliente 129,Alemania,PROD-018,717.20,completado
+24/06/2024,Cliente 072,FR,PROD-009,1282.83,pendiente
+2024/03/21,Cliente 096,Portugal,PROD-040,1916.41,pendiente
+2024-01-10,Cliente 160,Italia,PROD-016,488.29,completado
+15-13-2024,Cliente 071,Italia,PROD-035,33.58,pendiente
+20-02-2025,Cliente 036,España,PROD-016,799.82,completado
+21/03/2025,Cliente 138,México,PROD-050,547.46,cancelado
+22/06/2025,Cliente 183,Portugal,PROD-023,1591.74,cancelado
+2024/11/18,Cliente 200,España,PROD-020,75.39,enviado
+2024/09/20,Cliente 137,México,PROD-041,254.97,cancelado
+27/01/2025,Cliente 108,  espana ,PROD-015,1828.76,pendiente
+19-02-2024,Cliente 155,España,PROD-025,1490.16,completado
+18/05/2025,Cliente 093,ALEMANIA,PROD-038,1941.54,cancelado
+16-04-2024,Cliente 200,  de ,PROD-044,1628.88,cancelado
+2025/01/13,Cliente 176,PORTUGAL,PROD-014,653.26,cancelado
+2024-01-09,Cliente 006,Francia,PROD-049,894.71,pendiente
+2024-01-05,Cliente 126,Italia,PROD-049,1116.02,cancelado
+15-13-2024,Cliente 122,Italia,PROD-036,"214,99",completado
+2024/05/25,Cliente 126,  germany ,PROD-001,439.01,completado
+23-10-2024,Cliente 177,México,PROD-004,818.12,enviado
+2024-03-19,Cliente 149,Portugal,PROD-026,1266.94,enviado
+2025/04/02,Cliente 083,Portugal,PROD-013,1528.12,enviado
+2025-03-11,Cliente 009,México,PROD-029,1505.18,pendiente
+2024-03-01,Cliente 196,España,PROD-001,1890.92,cancelado
+16-01-2025,Cliente 032,Alemania,PROD-029,256.39,pendiente
+24-12-2024,Cliente 044,México,PROD-005,1609.97,pendiente
+2024/10/16,Cliente 162,Alemania,PROD-042,"1361,01",pendiente
+06/04/2024,Cliente 033,México,PROD-007,1408.45,pendiente
+14/05/2024,Cliente 183,Portugal,PROD-042,1014.22,completado
+15/06/2025,Cliente 045,México,PROD-030,961.96,pendiente
+25-08-2024,Cliente 125,Alemania,PROD-038,1314.96,cancelado
+28-08-2024,Cliente 122,Francia,PROD-040,"303,23",completado
+30-08-2024,Cliente 109,Portugal,PROD-014,692.76,cancelado
+2025-05-18,Cliente 082,Francia,PROD-025,835.72,pendiente
+25/07/2024,Cliente 195,FRANCE,PROD-036,1426.09,pendiente
+2024-04-15,Cliente 004,Portugal,PROD-016,15.11,completado
+2024-07-08,Cliente 020,Alemania,PROD-041,596.19,cancelado
+10-04-2025,Cliente 023,GERMANY,PROD-005,567.43,enviado
+01/05/2024,Cliente 123,Alemania,PROD-031,1443.31,enviado
+2024-02-10,Cliente 077,Italia,PROD-026,700.10,enviado
+07/01/2024,Cliente 055,Francia,PROD-010,163.41,enviado
+03-08-2024,Cliente 182,Alemania,PROD-029,1273.99,pendiente
+25-01-2025,Cliente 087,Francia,PROD-027,1737.83,cancelado
+2025/03/01,Cliente 047,México,PROD-030,1212.81,cancelado
+03-02-2024,Cliente 144,España,PROD-015,1236.06,cancelado
+01/01/2025,Cliente 127,  mx ,PROD-024,1618.74,completado
+2025/06/29,Cliente 094,México,PROD-030,1257.25,enviado
+2024/06/04,Cliente 175,  spain ,PROD-042,470.82,enviado
+06-06-2024,Cliente 101,Portugal,PROD-025,1828.37,enviado
+02/05/2025,Cliente 088,Italia,PROD-046,215.97,completado
+2024-02-11,Cliente 062,Francia,PROD-009,1680.07,cancelado
+04/01/2025,Cliente 108,Francia,PROD-016,1672.15,enviado
+08-06-2024,Cliente 121,  pt ,PROD-035,1697.41,completado
+2025-05-30,Cliente 123,Francia,PROD-038,57.13,completado
+31-01-2024,Cliente 169,ESP,PROD-023,1478.23,pendiente
+2025-02-24,Cliente 162,Francia,PROD-033,1151.24,completado
+16-02-2024,Cliente 087,Italia,PROD-028,1458.39,enviado
+2025-01-31,Cliente 101,Alemania,PROD-043,458.91,enviado
+2024/01/06,Cliente 186,España,PROD-023,616.34,enviado
+20-03-2024,Cliente 089,Francia,PROD-032,1037.58,cancelado
+07-11-2024,Cliente 157,España,PROD-010,1655.74,cancelado
+2024/04/09,Cliente 037,Alemania,PROD-013,1120.09,cancelado
+12/03/2024,Cliente 086,PORTUGAL,PROD-044,1075.26,pendiente
+17/05/2025,Cliente 030,Alemania,PROD-037,1634.82,enviado
+02/06/2024,Cliente 028,Portugal,PROD-037,1519.17,completado
+2024-01-13,Cliente 165,España,PROD-003,"228,97",enviado
+16-01-2025,Cliente 148,Alemania,PROD-044,906.95,enviado
+2024-13-05,Cliente 013,México,PROD-012,841.97,completado
+18-09-2024,Cliente 066,Francia,PROD-044,"806,12",cancelado
+08-04-2024,Cliente 069,Italia,PROD-037,896.43,cancelado
+11-10-2024,Cliente 155,ALEMANIA,PROD-012,521.34,enviado
+2024/07/24,Cliente 158,PORTUGAL,PROD-042,1085.86,completado
+01/03/2024,Cliente 157,MEXICO,PROD-025,1142.20,pendiente
+2025-05-26,Cliente 110,Portugal,PROD-001,491.46,pendiente
+2024-03-14,Cliente 155,FR,PROD-042,1309.50,cancelado
+19/12/2024,Cliente 136,México,PROD-044,1902.23,completado
+16-05-2024,Cliente 005,  deutschland ,PROD-039,"1336,08",cancelado
+06/02/2025,Cliente 107,Francia,PROD-003,1436.41,completado
+2024/08/09,Cliente 106,Italia,PROD-039,1735.93,enviado
+2024/08/29,Cliente 080,Francia,PROD-030,391.91,cancelado
+2025-01-12,Cliente 009,Italia,PROD-024,1473.97,completado
+2025-03-30,Cliente 071,Alemania,PROD-040,"1220,51",pendiente
+05/01/2024,Cliente 025,España,PROD-022,499.85,completado
+2024/07/26,Cliente 158,Portugal,PROD-039,201.63,completado
+08-11-2024,Cliente 197,España,PROD-042,324.07,enviado
+27/02/2024,Cliente 146,Alemania,PROD-046,"808,32",pendiente
+2025-03-20,Cliente 096,  esp ,PROD-021,391.45,cancelado
+01/01/2025,Cliente 076,España,PROD-035,975.75,cancelado
+2025-01-24,Cliente 022,Alemania,PROD-018,1598.13,enviado
+2025/03/10,Cliente 030,Italia,PROD-023,553.60,cancelado
+2024-07-03,Cliente 075,Italia,PROD-045,1886.52,completado
+2024-04-24,Cliente 174,Francia,PROD-048,454.19,completado
+31/04/2024,Cliente 023,  it ,PROD-036,1549.32,cancelado
+2024/12/11,Cliente 062,México,PROD-024,1781.40,cancelado
+13-05-2024,Cliente 069,España,PROD-029,645.04,enviado
+27/11/2024,Cliente 191,Francia,PROD-017,756.38,pendiente
+2024-03-20,Cliente 097,México,PROD-039,895.90,pendiente
+2024/11/25,Cliente 071,Portugal,PROD-026,1832.66,pendiente
+30-04-2025,Cliente 073,Alemania,PROD-002,,cancelado
+10-05-2024,Cliente 142,Portugal,PROD-005,861.19,completado
+20-03-2025,Cliente 030,Alemania,PROD-025,878.42,enviado
+19/11/2024,Cliente 071,Italia,PROD-038,889.99,completado
+2025-02-14,Cliente 087,Francia,PROD-013,138.77,cancelado
+2024-07-31,Cliente 173,Alemania,PROD-024,"1474,16",completado
+2024-02-18,Cliente 129,Alemania,PROD-003,720.52,completado
+22-11-2024,Cliente 106,Francia,PROD-020,1971.53,pendiente
+14/04/2025,Cliente 056,  alemania ,PROD-027,"744,27",pendiente
+2024-01-09,Cliente 093,Alemania,PROD-007,1329.33,completado
+29/12/2024,Cliente 156,México,PROD-041,1873.94,enviado
+24/02/2024,Cliente 143,  mexico ,PROD-049,179.51,cancelado
+2024-07-02,Cliente 135,Portugal,PROD-017,306.31,pendiente
+2025-03-31,Cliente 141,Alemania,PROD-035,1339.00,pendiente
+08-02-2025,Cliente 105,Alemania,PROD-003,1285.69,completado
+2025-03-18,Cliente 025,  espana ,PROD-040,596.88,cancelado
+26/01/2024,Cliente 172,Alemania,PROD-048,1566.95,enviado
+24/05/2025,Cliente 025,Alemania,PROD-034,,completado
+14-07-2024,Cliente 032,España,PROD-024,1732.94,cancelado
+01/11/2024,Cliente 029,España,PROD-016,1728.68,cancelado
+2024/01/16,Cliente 096,Italia,PROD-030,630.04,completado
+01/11/2024,Cliente 154,  fr ,PROD-026,1612.81,pendiente
+2025-01-14,Cliente 197,Italia,PROD-025,466.68,pendiente
+2024-07-07,Cliente 037,España,PROD-019,722.19,cancelado
+27/08/2024,Cliente 029,Francia,PROD-048,1517.89,completado
+2024/11/28,Cliente 063,ITALY,PROD-037,178.55,enviado
+2024/06/28,Cliente 001,ESPANA,PROD-022,445.43,enviado
+15-08-2024,Cliente 096,Alemania,PROD-017,846.74,pendiente
+2024/04/09,Cliente 182,Italia,PROD-008,644.63,completado
+26/05/2024,Cliente 096,  alemania ,PROD-037,1396.64,enviado
+12/10/2024,Cliente 109,ESP,PROD-031,776.18,cancelado
+2024-02-02,Cliente 167,  fr ,PROD-045,62.81,cancelado
+15-05-2024,Cliente 013,ALEMANIA,PROD-010,750.09,pendiente
+28/12/2024,Cliente 049,Alemania,PROD-032,373.74,enviado
+14/04/2025,Cliente 056,  alemania ,PROD-027,"744,27",pendiente
+16/10/2024,Cliente 068,Italia,PROD-016,"1587,00",cancelado
+04-01-2024,Cliente 174,  de ,PROD-029,1939.50,enviado
+15/05/2024,Cliente 039,Italia,PROD-047,1525.74,pendiente
+2024/12/16,Cliente 073,México,PROD-032,25.98,completado
+2024-12-23,Cliente 023,  espana ,PROD-004,1677.65,completado
+2024-04-29,Cliente 048,Portugal,PROD-014,261.68,completado
+2024/05/28,Cliente 071,  mx ,PROD-050,1759.86,cancelado
+2025-05-12,Cliente 075,Portugal,PROD-029,1359.83,pendiente
+11-09-2024,Cliente 103,MX,PROD-049,1967.38,pendiente
+2025/06/03,Cliente 011,Portugal,PROD-029,1908.92,enviado
+07/05/2024,Cliente 047,España,PROD-001,369.52,cancelado
+10/05/2025,Cliente 008,Italia,PROD-031,1366.37,completado
+2024/09/23,Cliente 198,Francia,PROD-038,737.98,pendiente
+2024/10/05,Cliente 043,Italia,PROD-008,1601.80,enviado
+2024-06-29,Cliente 108,ALEMANIA,PROD-034,603.69,enviado
+02-09-2024,Cliente 049,México,PROD-005,1068.57,enviado
+2025-04-10,Cliente 146,Italia,PROD-003,299.57,cancelado
+21-10-2024,Cliente 147,España,PROD-015,"1816,79",completado
+10-03-2024,Cliente 176,Portugal,PROD-022,"654,61",pendiente
+08-03-2025,Cliente 132,Italia,PROD-022,"1265,07",cancelado
+25-01-2025,Cliente 105,Francia,PROD-037,283.36,cancelado
+2025-01-02,Cliente 145,Alemania,PROD-013,1895.64,cancelado
+19-06-2025,Cliente 179,Portugal,PROD-043,1462.55,completado
+14-02-2024,Cliente 103,España,PROD-028,131.04,completado
+2025-02-19,Cliente 119,México,PROD-026,151.14,cancelado
+05/06/2024,Cliente 108,ITALY,PROD-025,"937,19",completado
+21-06-2024,Cliente 132,Alemania,PROD-044,585.77,completado
+16-04-2025,Cliente 036,Alemania,PROD-008,,cancelado
+02-04-2024,Cliente 197,Alemania,PROD-019,170.11,enviado
+16-03-2024,Cliente 020,España,PROD-042,123.21,completado
+2024/03/19,Cliente 043,Alemania,PROD-024,120.32,enviado
+22-05-2025,Cliente 127,Portugal,PROD-008,"1447,05",cancelado
+2024-01-09,Cliente 157,Italia,PROD-017,1166.21,enviado
+2024-02-30,Cliente 081,Francia,PROD-049,1346.66,completado
+2024/08/11,Cliente 192,Alemania,PROD-046,343.90,completado
+23-06-2024,Cliente 038,México,PROD-012,1726.72,completado
+07-03-2025,Cliente 090,Italia,PROD-015,48.57,completado
+2024-06-09,Cliente 174,Italia,PROD-023,1186.18,pendiente
+22/02/2025,Cliente 058,Francia,PROD-020,1511.29,enviado
+08/08/2024,Cliente 187,Francia,PROD-040,1187.65,cancelado
+21-09-2024,Cliente 084,México,PROD-030,,cancelado
+2024-07-05,Cliente 195,Alemania,PROD-025,431.20,pendiente
+28-02-2025,Cliente 108,Francia,PROD-015,311.71,enviado
+2024-02-14,Cliente 158,Alemania,PROD-049,,cancelado
+2025/05/05,Cliente 093,México,PROD-045,"842,42",completado
+02/05/2025,Cliente 062,México,PROD-012,549.19,completado
+2024-08-24,Cliente 155,México,PROD-031,1561.85,pendiente
+2025-04-05,Cliente 055,ESPANA,PROD-042,1444.81,cancelado
+2024/05/20,Cliente 192,Alemania,PROD-013,1795.46,completado
+23/06/2024,Cliente 119,PT,PROD-018,1991.37,completado
+12-01-2024,Cliente 120,México,PROD-020,480.24,enviado
+26/01/2025,Cliente 066,Portugal,PROD-030,294.80,pendiente
+01-04-2025,Cliente 137,Francia,PROD-006,1428.67,cancelado
+2024-10-29,Cliente 176,México,PROD-050,"797,65",completado
+2025/04/19,Cliente 071,Francia,PROD-013,,completado
+2025-03-31,Cliente 141,Alemania,PROD-035,1339.00,pendiente
+24-03-2025,Cliente 030,España,PROD-026,751.52,cancelado
+19/04/2024,Cliente 151,Alemania,PROD-004,884.56,cancelado
+2024-10-25,Cliente 126,España,PROD-043,623.62,pendiente
+07-04-2024,Cliente 054,Portugal,PROD-023,1604.36,completado
+23-05-2025,Cliente 163,Francia,PROD-013,1218.06,pendiente
+2024-12-12,Cliente 174,México,PROD-042,504.67,cancelado
+05/11/2024,Cliente 022,Alemania,PROD-024,195.75,enviado
+26/01/2025,Cliente 091,Francia,PROD-034,1602.32,completado
+2024-05-10,Cliente 165,Portugal,PROD-028,"1133,14",enviado
+2024-13-05,Cliente 122,Alemania,PROD-018,"1384,12",pendiente
+2025/01/03,Cliente 192,Francia,PROD-006,1247.47,cancelado
+31-05-2024,Cliente 190,ES,PROD-035,947.67,enviado
+2025-06-30,Cliente 176,Francia,PROD-028,1343.97,completado
+2024/06/02,Cliente 164,GERMANY,PROD-040,252.48,cancelado
+2024/11/07,Cliente 157,Alemania,PROD-033,1980.68,cancelado
+2024/12/18,Cliente 180,México,PROD-011,246.98,completado
+11/09/2024,Cliente 129,Alemania,PROD-038,631.06,pendiente
+2024/06/06,Cliente 124,Alemania,PROD-031,1022.66,enviado
+05-08-2024,Cliente 126,Portugal,PROD-024,210.52,pendiente
+14/03/2025,Cliente 146,Francia,PROD-023,1628.92,pendiente
+30/03/2024,Cliente 007,FRANCE,PROD-014,41.61,cancelado
+16-04-2025,Cliente 134,Italia,PROD-020,"1856,30",pendiente
+15-13-2024,Cliente 089,FR,PROD-029,1121.12,enviado
+18-08-2024,Cliente 014,Alemania,PROD-005,1012.10,pendiente
+2025-02-25,Cliente 064,México,PROD-010,262.51,pendiente
+2024/04/01,Cliente 114,México,PROD-024,770.38,completado
+2024/02/10,Cliente 162,Alemania,PROD-045,1394.81,pendiente
+2024-12-30,Cliente 050,Portugal,PROD-050,"1281,50",enviado
+2024-01-08,Cliente 195,  pt ,PROD-018,757.57,cancelado
+26-08-2024,Cliente 038,Portugal,PROD-009,15.64,pendiente
+2024/11/05,Cliente 187,México,PROD-006,829.10,completado
+11-10-2024,Cliente 130,Portugal,PROD-037,1563.80,completado
+2024-04-15,Cliente 038,Francia,PROD-028,552.85,completado
+2024/08/19,Cliente 004,Portugal,PROD-017,737.89,completado
+2024/05/31,Cliente 068,España,PROD-034,1586.11,completado
+2024-04-26,Cliente 031,Italia,PROD-017,1040.31,pendiente
+18/10/2024,Cliente 133,Portugal,PROD-038,1477.65,enviado
+25-04-2024,Cliente 038,Italia,PROD-024,1368.65,cancelado
+25-02-2024,Cliente 027,Francia,PROD-001,1279.36,pendiente
+06/09/2024,Cliente 178,Italia,PROD-038,141.46,cancelado
+2024-01-19,Cliente 196,  es ,PROD-001,"787,79",pendiente
+29-05-2025,Cliente 158,México,PROD-015,1833.10,enviado
+2024/11/22,Cliente 164,Alemania,PROD-048,891.58,pendiente
+17-05-2024,Cliente 126,Italia,PROD-043,1530.38,cancelado
+2024/05/12,Cliente 053,España,PROD-009,784.10,enviado
+30-10-2024,Cliente 075,España,PROD-024,1628.23,pendiente
+2024/08/10,Cliente 055,Alemania,PROD-013,613.34,completado
+02-06-2025,Cliente 169,Portugal,PROD-001,351.49,enviado
+05/03/2025,Cliente 105,México,PROD-018,207.05,completado
+2024-04-09,Cliente 093,Francia,PROD-048,669.11,pendiente
+13-06-2024,Cliente 111,Francia,PROD-003,684.65,cancelado
+2024-05-05,Cliente 193,  france ,PROD-003,184.76,completado
+2024-03-10,Cliente 087,Portugal,PROD-025,626.31,cancelado
+2024-05-22,Cliente 092,Italia,PROD-006,1238.87,pendiente
+2024-07-11,Cliente 146,  españa ,PROD-040,1227.84,enviado
+2024-02-30,Cliente 065,  es ,PROD-013,709.52,completado
+2024-03-02,Cliente 197,Italia,PROD-009,73.15,cancelado
+07/08/2024,Cliente 132,México,PROD-002,421.39,completado
+17-04-2025,Cliente 179,Alemania,PROD-027,1693.15,enviado
+2025/05/16,Cliente 118,Francia,PROD-009,1016.51,completado
+26/02/2025,Cliente 189,Portugal,PROD-047,1841.84,completado
+2025/02/10,Cliente 055,DEUTSCHLAND,PROD-045,691.42,cancelado
+23/01/2024,Cliente 187,Alemania,PROD-001,545.70,enviado
+16/08/2024,Cliente 085,Francia,PROD-048,485.65,cancelado
+18-04-2024,Cliente 196,Portugal,PROD-011,1221.85,completado
+26-02-2025,Cliente 130,España,PROD-005,1650.56,pendiente
+14-03-2025,Cliente 111,DEUTSCHLAND,PROD-024,845.92,cancelado
+28-06-2024,Cliente 156,Alemania,PROD-031,912.67,completado
+20/01/2025,Cliente 181,PORTUGAL,PROD-042,24.38,pendiente
+25/04/2025,Cliente 096,FRANCE,PROD-032,1724.69,cancelado
+31/04/2024,Cliente 078,España,PROD-019,749.22,cancelado
+19-05-2024,Cliente 102,México,PROD-021,409.69,pendiente
+23-01-2025,Cliente 036,México,PROD-038,132.35,completado
+2025-03-01,Cliente 022,Italia,PROD-018,689.23,pendiente
+2025-02-13,Cliente 026,Italia,PROD-047,1973.87,cancelado
+2025-02-07,Cliente 061,España,PROD-019,875.62,pendiente
+01/03/2025,Cliente 149,Portugal,PROD-003,338.36,enviado
+2024-06-28,Cliente 146,México,PROD-015,139.45,pendiente
+2024-02-15,Cliente 136,México,PROD-026,"1539,53",cancelado
+22-06-2025,Cliente 054,  fr ,PROD-042,151.04,cancelado
+27/07/2024,Cliente 034,Alemania,PROD-028,583.04,enviado
+29/07/2024,Cliente 156,Portugal,PROD-021,894.02,cancelado
+2025/04/03,Cliente 078,  espana ,PROD-001,1195.57,pendiente
+10-07-2024,Cliente 142,Italia,PROD-011,557.90,completado
+28/03/2024,Cliente 123,  mexico ,PROD-010,1632.78,enviado
+19-03-2024,Cliente 158,Francia,PROD-013,1444.59,cancelado
+29/04/2024,Cliente 121,México,PROD-002,1408.17,cancelado
+2024/07/02,Cliente 076,México,PROD-033,161.02,completado
+2025-05-21,Cliente 029,México,PROD-047,1126.10,enviado
+03-02-2024,Cliente 031,México,PROD-045,1554.05,cancelado
+2024-08-26,Cliente 061,Portugal,PROD-048,1520.29,cancelado
+2024/03/04,Cliente 046,España,PROD-029,523.89,completado
+2024/08/15,Cliente 096,España,PROD-016,835.64,cancelado
+22/03/2025,Cliente 169,Italia,PROD-041,1529.71,cancelado
+25-01-2024,Cliente 088,Francia,PROD-004,224.60,pendiente
+2024-01-29,Cliente 161,DE,PROD-022,"1486,69",cancelado
+29/03/2025,Cliente 084,FRANCIA,PROD-031,1330.46,cancelado
+2025/02/23,Cliente 172,Italia,PROD-029,"684,61",pendiente
+28-04-2024,Cliente 016,  deutschland ,PROD-038,"1158,06",enviado
+09/09/2024,Cliente 039,Portugal,PROD-037,452.59,completado
+14-04-2025,Cliente 055,Portugal,PROD-032,801.45,pendiente
+2025/03/19,Cliente 033,Francia,PROD-007,1386.72,cancelado
+21/03/2025,Cliente 082,México,PROD-047,304.28,completado
+01/06/2024,Cliente 123,Italia,PROD-005,898.92,completado
+2025-05-27,Cliente 065,Portugal,PROD-032,1899.85,completado
+2025/01/26,Cliente 039,  france ,PROD-003,557.21,enviado
+2025/05/01,Cliente 200,Francia,PROD-034,1681.33,cancelado
+06/07/2024,Cliente 028,Italia,PROD-041,887.05,enviado
+28/03/2025,Cliente 132,México,PROD-043,"347,69",pendiente
+10-07-2024,Cliente 003,Portugal,PROD-032,116.69,enviado
+2024/10/06,Cliente 104,Italia,PROD-047,678.90,enviado
+2024-13-05,Cliente 190,Francia,PROD-035,1996.83,pendiente
+30/01/2024,Cliente 010,  deutschland ,PROD-042,963.43,enviado
+31/04/2024,Cliente 017,España,PROD-017,1776.31,pendiente
+15-05-2025,Cliente 071,Portugal,PROD-019,1868.06,completado
+2024/08/27,Cliente 170,  portugal ,PROD-042,1624.70,enviado
+02/06/2024,Cliente 077,Francia,PROD-031,1498.73,cancelado
+2024-08-24,Cliente 016,España,PROD-040,445.25,cancelado
+08-05-2025,Cliente 162,México,PROD-014,,pendiente
+2025/06/06,Cliente 065,Italia,PROD-023,1325.10,pendiente
+08-02-2024,Cliente 035,España,PROD-025,203.41,cancelado
+24-05-2024,Cliente 153,México,PROD-046,1399.98,completado
+2024-13-05,Cliente 020,  de ,PROD-024,397.51,pendiente
+27-06-2025,Cliente 169,Francia,PROD-031,743.18,cancelado
+18/05/2025,Cliente 093,ALEMANIA,PROD-038,1941.54,cancelado
+2024-11-05,Cliente 035,Portugal,PROD-017,605.76,completado
+28-01-2025,Cliente 032,México,PROD-035,732.08,enviado
+23-12-2024,Cliente 082,Portugal,PROD-049,"207,14",cancelado
+2025/06/02,Cliente 036,España,PROD-008,317.05,enviado
+14/07/2024,Cliente 088,España,PROD-020,159.01,cancelado
+23/10/2024,Cliente 177,México,PROD-008,1814.69,cancelado
+22/07/2024,Cliente 125,Alemania,PROD-050,716.67,cancelado
+2024-06-01,Cliente 120,España,PROD-028,945.79,completado
+24/02/2024,Cliente 137,Portugal,PROD-012,1794.76,completado
+20-04-2025,Cliente 130,Italia,PROD-028,1229.18,cancelado
+29/10/2024,Cliente 042,España,PROD-046,41.70,cancelado
+05-05-2024,Cliente 191,Portugal,PROD-016,1477.10,cancelado
+2025-01-08,Cliente 078,México,PROD-021,797.24,enviado
+03/01/2024,Cliente 035,España,PROD-008,731.17,completado
+26-04-2025,Cliente 085,Alemania,PROD-027,1343.57,cancelado
+2025/02/20,Cliente 044,PT,PROD-016,1936.14,cancelado
+2024/08/15,Cliente 044,México,PROD-043,723.41,enviado
+31-08-2024,Cliente 182,Francia,PROD-043,1276.01,pendiente
+08-03-2024,Cliente 109,FRANCIA,PROD-037,658.97,cancelado
+2024-09-12,Cliente 200,Francia,PROD-015,"251,69",enviado
+2025/01/04,Cliente 167,Italia,PROD-021,"1764,29",completado
+21-04-2025,Cliente 151,Francia,PROD-020,156.99,cancelado
+2024-05-29,Cliente 050,Italia,PROD-017,152.06,cancelado
+27-03-2025,Cliente 017,ESPANA,PROD-026,1724.83,cancelado
+09/03/2025,Cliente 103,México,PROD-043,1382.84,pendiente
+2025-06-20,Cliente 093,  france ,PROD-046,506.49,enviado
+2025-03-22,Cliente 189,Portugal,PROD-043,1376.85,enviado
+07/01/2024,Cliente 054,Alemania,PROD-004,1243.33,enviado
+20-11-2024,Cliente 145,Portugal,PROD-032,714.17,cancelado
+21/08/2024,Cliente 198,FRANCE,PROD-018,"564,42",pendiente
+13/10/2024,Cliente 200,España,PROD-050,1079.40,completado
+2025/05/20,Cliente 145,Portugal,PROD-042,903.32,pendiente
+2024/11/15,Cliente 049,Italia,PROD-005,588.27,cancelado
+2024/10/05,Cliente 163,MÉXICO,PROD-037,1199.19,cancelado
+05-04-2024,Cliente 028,México,PROD-006,1074.88,enviado
+2024-12-19,Cliente 122,España,PROD-020,114.52,cancelado
+01/06/2024,Cliente 123,Italia,PROD-005,898.92,completado
+01/03/2024,Cliente 172,  espana ,PROD-032,151.01,enviado
+23/03/2025,Cliente 015,  spain ,PROD-020,240.81,enviado
+2024/10/12,Cliente 141,España,PROD-007,891.83,completado
+09/11/2024,Cliente 165,Italia,PROD-004,963.60,pendiente
+2024/06/06,Cliente 114,España,PROD-024,192.13,pendiente
+2024-06-03,Cliente 076,México,PROD-027,1600.15,cancelado
+24/03/2025,Cliente 100,FRANCE,PROD-005,1992.80,pendiente
+2024-10-02,Cliente 194,ES,PROD-038,694.14,enviado
+07-04-2024,Cliente 161,Portugal,PROD-043,1020.01,enviado
+18-08-2024,Cliente 065,Portugal,PROD-013,1790.90,pendiente
+2024/02/18,Cliente 162,FRANCIA,PROD-007,1629.50,cancelado
+13-05-2025,Cliente 055,  italia ,PROD-050,119.02,enviado
+2024-08-17,Cliente 147,Portugal,PROD-015,741.45,cancelado
+2025/03/22,Cliente 008,España,PROD-017,411.96,pendiente
+18/07/2024,Cliente 009,Portugal,PROD-009,1571.88,cancelado
+12/08/2024,Cliente 064,México,PROD-008,"1040,74",cancelado
+13/05/2024,Cliente 051,Francia,PROD-036,980.84,enviado
+2024-11-03,Cliente 198,Portugal,PROD-022,769.28,pendiente
+2024/10/08,Cliente 021,GERMANY,PROD-009,678.34,enviado
+2024/06/28,Cliente 102,Francia,PROD-032,"1868,51",enviado
+06/02/2025,Cliente 107,Francia,PROD-003,1436.41,completado
+18/08/2024,Cliente 027,España,PROD-005,596.87,pendiente
+22/02/2024,Cliente 089,Francia,PROD-041,"1073,84",pendiente
+25-07-2024,Cliente 173,  mx ,PROD-003,1399.91,pendiente
+2024-05-30,Cliente 164,  francia ,PROD-002,816.86,pendiente
+2024-03-19,Cliente 093,España,PROD-009,964.24,cancelado
+13/01/2025,Cliente 136,México,PROD-003,480.03,pendiente
+27-08-2024,Cliente 051,México,PROD-028,1183.68,completado
+18/03/2024,Cliente 058,España,PROD-040,601.67,completado
+02-03-2024,Cliente 076,IT,PROD-039,350.69,enviado
+2024-03-29,Cliente 081,  es ,PROD-009,774.22,enviado
+2024-10-28,Cliente 144,Portugal,PROD-023,"1936,12",completado
+2024-06-18,Cliente 165,México,PROD-036,624.61,completado
+09/01/2024,Cliente 089,  pt ,PROD-013,"1123,31",enviado
+2025-05-25,Cliente 122,Italia,PROD-030,483.38,cancelado
+2025-03-05,Cliente 154,España,PROD-044,"210,78",completado
+2024-07-17,Cliente 128,México,PROD-012,1689.13,enviado
+2025/03/30,Cliente 109,Alemania,PROD-047,335.94,cancelado
+27/02/2024,Cliente 038,Francia,PROD-004,1967.23,pendiente
+2024/12/18,Cliente 070,Portugal,PROD-020,668.27,pendiente
+01/02/2024,Cliente 098,Portugal,PROD-026,794.59,cancelado
+2025-02-11,Cliente 100,Portugal,PROD-044,488.54,pendiente
+17/03/2025,Cliente 053,Italia,PROD-013,322.64,cancelado
+2025-05-08,Cliente 120,  pt ,PROD-034,1967.50,completado
+2025/03/23,Cliente 097,México,PROD-015,1476.86,pendiente
+2024/02/15,Cliente 015,Portugal,PROD-009,442.37,pendiente
+05/02/2024,Cliente 050,IT,PROD-009,1968.89,completado
+2025-06-11,Cliente 002,Portugal,PROD-046,388.47,cancelado
+2024/06/13,Cliente 021,México,PROD-050,"818,51",cancelado
+2024-06-12,Cliente 186,  méxico ,PROD-028,490.27,completado
+2025/05/26,Cliente 064,México,PROD-048,923.12,pendiente
+18/12/2024,Cliente 079,Francia,PROD-001,1860.73,enviado
+01/01/2025,Cliente 114,España,PROD-045,1786.45,completado
+25/04/2025,Cliente 073,Portugal,PROD-050,1969.04,cancelado
+01/01/2025,Cliente 127,  mx ,PROD-024,1618.74,completado
+24/11/2024,Cliente 165,Alemania,PROD-025,110.20,cancelado
+11/01/2025,Cliente 174,  portugal ,PROD-006,798.78,completado
+2024/06/28,Cliente 172,España,PROD-025,1944.86,pendiente
+11/04/2024,Cliente 045,Alemania,PROD-036,1324.25,completado
+2024/08/08,Cliente 040,Italia,PROD-046,127.04,enviado
+2024-03-25,Cliente 151,México,PROD-037,1817.87,cancelado
+2024/01/28,Cliente 148,México,PROD-015,1567.98,completado
+2025-06-13,Cliente 101,DEUTSCHLAND,PROD-049,1547.02,completado
+2024/07/09,Cliente 136,España,PROD-033,867.30,enviado
+2025-02-25,Cliente 200,España,PROD-021,1513.24,cancelado
+2024-07-25,Cliente 120,México,PROD-039,956.69,pendiente
+22-03-2025,Cliente 080,Portugal,PROD-039,1553.24,pendiente
+2025-03-21,Cliente 010,Francia,PROD-006,57.27,completado
+21/06/2024,Cliente 110,España,PROD-026,267.52,cancelado
+2025-01-03,Cliente 195,GERMANY,PROD-028,1796.08,completado
+2025-02-24,Cliente 162,Francia,PROD-033,1151.24,completado
+23/02/2024,Cliente 185,ESPAÑA,PROD-029,240.97,pendiente
+15-13-2024,Cliente 178,ITALY,PROD-001,1087.67,pendiente
+21/04/2024,Cliente 036,España,PROD-035,1685.17,enviado
+2024-09-22,Cliente 128,  spain ,PROD-010,508.69,completado
+2024/08/25,Cliente 008,Francia,PROD-048,1284.55,enviado
+30/07/2024,Cliente 080,México,PROD-045,1602.21,enviado
+15-04-2024,Cliente 061,Italia,PROD-011,1947.94,enviado
+2024-13-05,Cliente 036,Portugal,PROD-016,456.24,cancelado
+16-01-2025,Cliente 148,Alemania,PROD-044,906.95,enviado
+13/06/2025,Cliente 166,ITALY,PROD-046,1518.75,cancelado
+07/02/2025,Cliente 171,Portugal,PROD-024,1214.10,cancelado
+2024-01-19,Cliente 024,España,PROD-039,"1118,69",pendiente
+2024-02-30,Cliente 194,  france ,PROD-034,1900.64,enviado
+2024-03-28,Cliente 080,Italia,PROD-001,100.90,pendiente
+24-01-2024,Cliente 173,Italia,PROD-042,13.89,completado
+26-03-2024,Cliente 028,MX,PROD-035,1933.06,pendiente
+2024-11-26,Cliente 171,Portugal,PROD-046,965.94,cancelado
+2024-10-25,Cliente 106,Alemania,PROD-026,1041.88,enviado
+09/10/2024,Cliente 164,Italia,PROD-039,192.43,completado
+2024/05/15,Cliente 049,Italia,PROD-005,"1478,04",completado
+05/03/2025,Cliente 097,Italia,PROD-007,1764.72,cancelado
+2025-04-15,Cliente 052,FRANCIA,PROD-045,11.35,enviado
+2024-01-02,Cliente 044,  italy ,PROD-012,1312.50,pendiente
+2024/01/25,Cliente 095,Francia,PROD-041,1749.66,cancelado
+02/02/2025,Cliente 004,  es ,PROD-050,260.99,enviado
+2024/05/28,Cliente 095,Italia,PROD-006,185.40,completado
+2024/06/10,Cliente 096,Alemania,PROD-027,1104.66,cancelado
+2024/09/04,Cliente 119,Portugal,PROD-010,389.92,cancelado
+02/06/2024,Cliente 184,Portugal,PROD-038,889.26,cancelado
+07-08-2024,Cliente 019,Italia,PROD-029,408.35,enviado
+14/12/2024,Cliente 181,Alemania,PROD-010,128.52,completado
+03-02-2025,Cliente 198,  deutschland ,PROD-032,1153.53,cancelado
+2024/10/10,Cliente 042,México,PROD-050,1542.06,completado
+2024-13-05,Cliente 173,SPAIN,PROD-049,1175.44,completado
+16-04-2024,Cliente 183,México,PROD-005,744.53,completado
+2025-05-26,Cliente 034,España,PROD-025,1973.90,cancelado
+2025-05-30,Cliente 022,IT,PROD-027,372.59,pendiente
+05/03/2024,Cliente 043,España,PROD-047,,enviado
+2024-10-23,Cliente 117,  mexico ,PROD-042,1857.63,cancelado
+26-01-2025,Cliente 114,México,PROD-015,1212.64,pendiente
+2024-03-28,Cliente 117,México,PROD-014,291.93,cancelado
+2025/05/21,Cliente 167,Italia,PROD-003,1279.83,enviado
+2024/01/18,Cliente 017,Portugal,PROD-049,21.74,completado
+08/09/2024,Cliente 174,  francia ,PROD-009,"1822,19",cancelado
+01/01/2024,Cliente 151,  alemania ,PROD-013,712.72,completado
+2025-01-26,Cliente 084,España,PROD-033,645.44,enviado
+2024/01/06,Cliente 145,Francia,PROD-046,1612.72,enviado
+2024/04/23,Cliente 083,Alemania,PROD-002,,enviado
+2024-11-10,Cliente 037,Francia,PROD-046,845.43,pendiente
+15/01/2024,Cliente 002,Alemania,PROD-047,351.83,completado
+2024/04/05,Cliente 060,  germany ,PROD-015,1423.33,enviado
+2024-10-02,Cliente 084,España,PROD-047,1315.78,enviado
+15-08-2024,Cliente 096,Alemania,PROD-017,846.74,pendiente
+2024-04-10,Cliente 084,México,PROD-004,"605,94",pendiente
+10-06-2024,Cliente 179,Portugal,PROD-047,590.86,enviado
+12/05/2024,Cliente 009,Francia,PROD-037,223.04,cancelado
+08/11/2024,Cliente 123,España,PROD-005,"1410,36",enviado
+23-10-2024,Cliente 181,  portugal ,PROD-015,359.63,pendiente
+09/10/2024,Cliente 191,España,PROD-039,,completado
+24-02-2025,Cliente 152,México,PROD-021,275.68,pendiente
+2024-09-30,Cliente 107,ESPANA,PROD-010,600.51,completado
+2024-11-14,Cliente 030,España,PROD-030,457.15,completado
+05/05/2025,Cliente 142,México,PROD-021,416.98,pendiente
+2024/04/06,Cliente 155,México,PROD-010,1704.62,pendiente
+2025/01/31,Cliente 061,México,PROD-031,1735.12,pendiente
+13/10/2024,Cliente 021,Portugal,PROD-031,1772.81,completado
+2024/02/29,Cliente 066,Portugal,PROD-014,1064.68,pendiente
+27-06-2025,Cliente 030,Portugal,PROD-042,866.10,enviado
+2024-04-28,Cliente 166,España,PROD-011,29.25,pendiente
+22/02/2025,Cliente 058,Francia,PROD-020,1511.29,enviado
+2024-09-30,Cliente 064,México,PROD-044,1949.25,cancelado
+29/11/2024,Cliente 083,ESPANA,PROD-017,206.50,cancelado
+28/05/2024,Cliente 048,Portugal,PROD-021,1070.59,enviado
+13/04/2025,Cliente 185,España,PROD-021,1219.78,cancelado
+2024-02-30,Cliente 103,España,PROD-047,16.14,enviado
+11/09/2024,Cliente 129,Alemania,PROD-038,631.06,pendiente
+08-06-2024,Cliente 163,Francia,PROD-017,1438.05,cancelado
+2024/03/16,Cliente 157,España,PROD-030,1782.07,enviado
+07/12/2024,Cliente 141,México,PROD-032,1843.99,cancelado
+2025-02-14,Cliente 117,ESPAÑA,PROD-022,1065.66,enviado
+2025/03/15,Cliente 017,FRANCE,PROD-037,1507.13,completado
+27/02/2024,Cliente 020,México,PROD-045,1952.21,cancelado
+15-13-2024,Cliente 106,  mexico ,PROD-021,1395.27,cancelado
+2024-11-15,Cliente 052,Alemania,PROD-013,1281.31,pendiente
+21-08-2024,Cliente 117,Francia,PROD-041,1734.30,pendiente
+2024-11-15,Cliente 052,Alemania,PROD-013,1281.31,pendiente
+09/03/2025,Cliente 033,España,PROD-048,1047.79,enviado
+2024/01/25,Cliente 095,Francia,PROD-041,1749.66,cancelado
+2024/03/22,Cliente 107,España,PROD-024,728.24,completado
+27/04/2025,Cliente 047,México,PROD-044,1618.60,pendiente
+16-10-2024,Cliente 164,Italia,PROD-021,137.04,pendiente
+16/01/2025,Cliente 172,Portugal,PROD-008,1913.68,cancelado
+2025/03/28,Cliente 039,España,PROD-035,159.74,completado
+2024/05/19,Cliente 086,México,PROD-009,723.59,completado
+2024/07/08,Cliente 136,España,PROD-032,793.66,completado
+18/10/2024,Cliente 133,Portugal,PROD-038,1477.65,enviado
+2024-04-01,Cliente 084,México,PROD-025,68.15,pendiente
+2024/06/12,Cliente 006,Italia,PROD-006,1002.53,cancelado
+2025/03/14,Cliente 013,Francia,PROD-008,"1023,96",enviado
+2024/06/17,Cliente 198,Italia,PROD-014,250.27,cancelado
+15/06/2024,Cliente 090,Alemania,PROD-033,1544.83,cancelado
+12/03/2025,Cliente 091,Alemania,PROD-040,899.79,cancelado
+08/06/2025,Cliente 122,Francia,PROD-015,461.58,cancelado
+03/10/2024,Cliente 190,Italia,PROD-010,400.17,cancelado
+13-03-2025,Cliente 115,España,PROD-036,576.45,completado
+2025/03/23,Cliente 158,Francia,PROD-023,1417.29,enviado
+2025/01/07,Cliente 075,FR,PROD-036,716.73,pendiente
+01/05/2024,Cliente 123,Alemania,PROD-031,1443.31,enviado
+2025-02-01,Cliente 078,Italia,PROD-006,1855.74,enviado
+2024-12-22,Cliente 001,MÉXICO,PROD-049,263.42,completado
+24-04-2025,Cliente 021,Alemania,PROD-039,1005.94,completado
+19/06/2024,Cliente 182,Alemania,PROD-045,372.74,enviado
+2025/01/01,Cliente 047,Italia,PROD-036,1766.82,cancelado
+2025/02/22,Cliente 181,Italia,PROD-019,589.61,cancelado
+2024/05/23,Cliente 189,  mexico ,PROD-047,1322.23,cancelado
+2024-01-16,Cliente 055,Francia,PROD-026,340.96,completado
+22/09/2024,Cliente 193,España,PROD-020,1790.96,enviado
+07-08-2024,Cliente 147,  alemania ,PROD-010,,completado
+2024/09/20,Cliente 030,Alemania,PROD-030,1495.65,completado
+2024/08/23,Cliente 057,  italy ,PROD-045,1555.42,completado
+2025-05-21,Cliente 029,México,PROD-047,1126.10,enviado
+15-13-2024,Cliente 188,Portugal,PROD-048,1236.86,pendiente
+2024/02/10,Cliente 001,México,PROD-001,1866.92,completado
+2025/03/20,Cliente 168,España,PROD-039,1740.88,completado
+26-11-2024,Cliente 006,  fr ,PROD-049,1673.56,pendiente
+27/09/2024,Cliente 161,Portugal,PROD-001,596.84,pendiente
+2024-01-09,Cliente 094,Alemania,PROD-003,1457.74,cancelado
+2024-04-25,Cliente 194,Portugal,PROD-003,1648.33,cancelado
+11-02-2025,Cliente 103,Portugal,PROD-006,1536.55,enviado
+2024-06-07,Cliente 190,España,PROD-034,1020.30,completado
+2024/08/10,Cliente 176,Francia,PROD-024,"1712,35",pendiente
+2024-11-28,Cliente 173,Francia,PROD-006,323.25,pendiente
+20-05-2024,Cliente 086,Francia,PROD-005,1530.81,completado
+2025-06-20,Cliente 080,MX,PROD-015,1313.12,enviado
+2024-04-22,Cliente 045,  de ,PROD-017,483.48,completado
+2024/09/25,Cliente 007,Alemania,PROD-040,225.61,pendiente
+2025/02/04,Cliente 007,Portugal,PROD-031,1383.97,completado
+06-06-2024,Cliente 168,México,PROD-043,1670.14,pendiente
+2024/01/03,Cliente 188,Italia,PROD-036,577.65,cancelado
+02/02/2025,Cliente 004,  es ,PROD-050,260.99,enviado
+08/01/2025,Cliente 115,Portugal,PROD-015,577.01,enviado
+14-05-2024,Cliente 162,México,PROD-039,"974,58",enviado
+2025/06/15,Cliente 034,  deutschland ,PROD-031,1976.43,completado
+2024-10-29,Cliente 176,México,PROD-050,"797,65",completado
+2025/02/18,Cliente 065,Francia,PROD-032,1538.32,cancelado
+2024-09-29,Cliente 033,Portugal,PROD-021,996.18,cancelado
+30-03-2024,Cliente 020,Alemania,PROD-047,1692.04,enviado
+2025/04/06,Cliente 136,Portugal,PROD-048,277.93,completado
+02/12/2024,Cliente 050,  españa ,PROD-037,144.41,enviado
+15-10-2024,Cliente 194,Italia,PROD-042,1892.17,completado
+15-13-2024,Cliente 017,Francia,PROD-041,401.78,completado
+2025-06-24,Cliente 166,Alemania,PROD-027,1110.98,cancelado
+2025/02/22,Cliente 097,GERMANY,PROD-005,1320.74,cancelado
+11/02/2025,Cliente 180,Italia,PROD-044,1454.12,completado
+2025/02/28,Cliente 052,  de ,PROD-045,"1278,63",pendiente
+02/09/2024,Cliente 085,PT,PROD-046,473.34,cancelado
+06-02-2025,Cliente 035,Alemania,PROD-050,474.89,completado
+23/11/2024,Cliente 190,Italia,PROD-010,100.97,completado
+2025/05/31,Cliente 028,Portugal,PROD-012,378.40,pendiente
+22/06/2024,Cliente 112,Alemania,PROD-018,"991,32",cancelado
+2024/06/23,Cliente 005,FR,PROD-029,1896.93,pendiente
+2024-09-18,Cliente 006,España,PROD-004,1327.32,completado
+2024/11/26,Cliente 120,Italia,PROD-032,555.33,pendiente
+2024-13-05,Cliente 013,México,PROD-012,841.97,completado
+2025/03/30,Cliente 109,Alemania,PROD-047,335.94,cancelado
+23-09-2024,Cliente 006,Portugal,PROD-027,1864.37,completado
+31/05/2024,Cliente 168,ALEMANIA,PROD-005,1208.77,enviado
+2024-04-14,Cliente 093,Francia,PROD-011,1263.55,pendiente
+03/02/2025,Cliente 142,Portugal,PROD-020,"575,02",pendiente
+29/05/2025,Cliente 173,PT,PROD-016,379.79,cancelado
+10/08/2024,Cliente 173,México,PROD-009,588.25,enviado
+15-13-2024,Cliente 021,Francia,PROD-016,70.07,completado
+2024/06/28,Cliente 150,Italia,PROD-028,1832.98,cancelado
+2024/01/26,Cliente 188,Francia,PROD-034,388.52,pendiente
+2024/05/04,Cliente 021,España,PROD-030,1675.58,cancelado
+08/12/2024,Cliente 149,México,PROD-045,962.20,enviado
+16/03/2024,Cliente 063,Francia,PROD-024,1867.19,pendiente
+02/03/2025,Cliente 135,España,PROD-035,1051.73,completado
+01/06/2024,Cliente 005,España,PROD-031,1473.56,completado
+25-11-2024,Cliente 035,Portugal,PROD-042,663.63,completado
+2024/05/28,Cliente 130,Francia,PROD-022,18.55,pendiente
+2025-03-08,Cliente 142,Portugal,PROD-001,1992.28,completado
+2025/06/05,Cliente 048,Italia,PROD-001,807.69,enviado
+17/03/2024,Cliente 197,Italia,PROD-020,"203,84",completado
+28/09/2024,Cliente 165,MEXICO,PROD-033,1846.88,completado
+17/03/2025,Cliente 044,Italia,PROD-012,1136.20,completado
+04/05/2025,Cliente 121,Portugal,PROD-049,753.51,enviado
+28-09-2024,Cliente 126,España,PROD-010,108.77,completado
+2024/01/10,Cliente 057,México,PROD-019,1054.90,pendiente
+2025-05-01,Cliente 090,Italia,PROD-039,1693.07,enviado
+02/12/2024,Cliente 107,México,PROD-042,"1576,07",pendiente
+2025/01/28,Cliente 126,Italia,PROD-011,837.10,completado
+18/12/2024,Cliente 032,Portugal,PROD-002,1951.18,cancelado
+12-08-2024,Cliente 076,México,PROD-047,1317.35,cancelado
+2025-05-08,Cliente 077,Italia,PROD-039,1709.54,enviado
+2025-01-01,Cliente 134,Alemania,PROD-005,1055.54,enviado
+2024-01-08,Cliente 195,  pt ,PROD-018,757.57,cancelado
+29/06/2025,Cliente 136,México,PROD-028,786.24,completado
+18/07/2024,Cliente 115,Alemania,PROD-044,"399,47",completado
+2025-03-09,Cliente 130,Portugal,PROD-014,631.77,enviado
+2025-06-23,Cliente 159,España,PROD-018,575.19,completado
+2024/02/13,Cliente 182,  spain ,PROD-041,1155.76,cancelado
+10/08/2024,Cliente 173,México,PROD-009,588.25,enviado
+01/07/2024,Cliente 042,Italia,PROD-025,187.48,cancelado
+2024-05-20,Cliente 009,México,PROD-038,88.45,pendiente
+20-03-2025,Cliente 059,España,PROD-014,1790.63,cancelado
+2024-03-11,Cliente 090,México,PROD-023,1661.23,pendiente
+2025/03/26,Cliente 133,Francia,PROD-018,997.44,completado
+15/08/2024,Cliente 113,España,PROD-040,362.39,cancelado
+2024/01/12,Cliente 183,México,PROD-017,1897.00,pendiente
+25-04-2024,Cliente 031,Francia,PROD-019,1665.14,pendiente
+29/10/2024,Cliente 003,México,PROD-036,1299.40,enviado
+2024-02-12,Cliente 159,MEXICO,PROD-041,429.51,completado
+12-08-2024,Cliente 076,México,PROD-047,1317.35,cancelado
+14-03-2025,Cliente 002,Francia,PROD-022,330.25,cancelado
+23-02-2025,Cliente 036,Portugal,PROD-013,929.62,enviado
+18/04/2024,Cliente 080,Italia,PROD-048,1052.69,pendiente
+19/04/2024,Cliente 109,Portugal,PROD-037,514.73,pendiente
+2025/04/04,Cliente 137,Portugal,PROD-041,"1368,92",pendiente
+08/02/2025,Cliente 123,México,PROD-006,1455.31,cancelado
+2024/07/26,Cliente 097,Italia,PROD-037,445.00,enviado
+2025/01/24,Cliente 108,DE,PROD-035,786.07,enviado
+12-09-2024,Cliente 004,Francia,PROD-022,191.86,enviado
+2025-02-17,Cliente 076,Francia,PROD-014,1330.04,cancelado
+26/12/2024,Cliente 042,PT,PROD-007,1559.83,enviado
+2025/01/09,Cliente 181,Alemania,PROD-005,739.20,enviado
+2024/09/19,Cliente 070,Portugal,PROD-009,549.55,completado
+2024-11-05,Cliente 035,Portugal,PROD-017,605.76,completado
+21-03-2025,Cliente 190,Francia,PROD-046,354.44,cancelado
+2025/02/10,Cliente 055,DEUTSCHLAND,PROD-045,691.42,cancelado
+10/02/2025,Cliente 143,Portugal,PROD-031,970.11,pendiente
+22-02-2024,Cliente 033,Portugal,PROD-033,64.32,completado
+2024/05/12,Cliente 078,España,PROD-011,1664.47,enviado
+29-03-2025,Cliente 114,Italia,PROD-014,"1213,91",cancelado
+28/09/2024,Cliente 185,España,PROD-001,707.46,completado
+2025-05-26,Cliente 061,Alemania,PROD-013,"702,23",completado
+2024/07/29,Cliente 078,México,PROD-006,814.97,completado
+2024/07/02,Cliente 101,México,PROD-045,375.05,completado
+2025-06-21,Cliente 063,Italia,PROD-034,919.23,cancelado
+01/05/2025,Cliente 176,Alemania,PROD-030,1179.11,pendiente
+2024-05-08,Cliente 021,  méxico ,PROD-028,1864.31,cancelado
+18-03-2025,Cliente 150,Alemania,PROD-026,1606.61,cancelado
+09-12-2024,Cliente 011,Francia,PROD-032,218.65,enviado
+2025-04-26,Cliente 018,Alemania,PROD-023,"514,76",enviado
+2024-09-09,Cliente 081,Italia,PROD-017,1318.17,enviado
+2025-05-12,Cliente 122,Portugal,PROD-036,1534.01,enviado
+18/03/2024,Cliente 058,España,PROD-040,601.67,completado
+2025/01/05,Cliente 195,Francia,PROD-044,117.61,cancelado
+2025/03/25,Cliente 182,  de ,PROD-013,21.56,completado
+2024-06-18,Cliente 109,  germany ,PROD-044,990.77,enviado
+2025-01-22,Cliente 148,México,PROD-013,,completado
+2024-11-07,Cliente 085,Alemania,PROD-029,1684.81,pendiente
+05-11-2024,Cliente 065,Portugal,PROD-040,633.57,cancelado
+11/02/2024,Cliente 011,Francia,PROD-043,135.09,enviado
+2024/05/31,Cliente 011,GERMANY,PROD-023,1866.85,enviado
+23-04-2024,Cliente 096,Alemania,PROD-043,917.85,enviado
+21/06/2024,Cliente 109,  de ,PROD-032,1032.23,cancelado
+22-08-2024,Cliente 171,Francia,PROD-016,1083.23,enviado
+2024-13-05,Cliente 007,Portugal,PROD-021,649.99,enviado
+2024/03/30,Cliente 189,España,PROD-038,1553.51,pendiente
+2025/03/10,Cliente 194,México,PROD-042,1534.28,cancelado
+01/05/2024,Cliente 168,Alemania,PROD-048,1379.09,cancelado
+2025/02/06,Cliente 197,  alemania ,PROD-006,"756,59",cancelado
+2024-11-13,Cliente 084,Francia,PROD-026,1948.88,completado
+2025/05/27,Cliente 136,México,PROD-020,52.76,pendiente
+2025/05/15,Cliente 185,México,PROD-035,1592.00,cancelado
+2024-08-30,Cliente 115,Portugal,PROD-038,"882,67",completado
+2024/07/30,Cliente 117,Alemania,PROD-022,1652.37,cancelado
+22/04/2024,Cliente 022,GERMANY,PROD-003,1235.24,enviado
+07/09/2024,Cliente 143,Alemania,PROD-015,1979.15,pendiente
+2025/06/04,Cliente 132,Alemania,PROD-006,1797.58,completado
+07-11-2024,Cliente 157,España,PROD-010,1655.74,cancelado
+2024/01/11,Cliente 087,Italia,PROD-042,1761.08,completado
+2024-06-01,Cliente 120,España,PROD-028,945.79,completado
+14/08/2024,Cliente 135,Portugal,PROD-035,1230.72,completado
+10-06-2024,Cliente 179,Portugal,PROD-047,590.86,enviado
+2025-05-14,Cliente 110,ALEMANIA,PROD-012,796.76,pendiente
+2025-05-28,Cliente 158,Portugal,PROD-044,31.08,enviado
+2025/05/18,Cliente 002,Italia,PROD-036,1597.95,pendiente
+10/09/2024,Cliente 068,Francia,PROD-045,506.44,enviado
+2025-01-03,Cliente 068,Francia,PROD-047,403.67,enviado
+09/01/2024,Cliente 019,Alemania,PROD-015,757.89,cancelado
+15/02/2024,Cliente 073,Alemania,PROD-017,1498.17,pendiente
+2025-03-16,Cliente 177,ALEMANIA,PROD-037,1496.24,enviado
+25/01/2024,Cliente 176,Francia,PROD-025,713.09,completado
+2024-06-07,Cliente 170,  deutschland ,PROD-020,1549.59,cancelado
+2025-02-10,Cliente 179,Italia,PROD-015,923.41,pendiente
+2024-05-03,Cliente 193,Portugal,PROD-033,1176.20,cancelado
+11/02/2024,Cliente 171,México,PROD-013,"669,11",cancelado
+2024/10/08,Cliente 014,PT,PROD-034,451.96,cancelado
+05-07-2024,Cliente 097,  deutschland ,PROD-025,"1197,10",enviado
+21/07/2024,Cliente 115,Portugal,PROD-041,505.45,enviado
+04/09/2024,Cliente 141,México,PROD-001,1383.65,completado
+2024-01-18,Cliente 149,Italia,PROD-024,1386.66,cancelado
+23/02/2024,Cliente 185,ESPAÑA,PROD-029,240.97,pendiente
+06/06/2025,Cliente 049,México,PROD-010,1641.33,pendiente
+29/10/2024,Cliente 172,  italia ,PROD-007,"1035,41",enviado
+16/10/2024,Cliente 068,Italia,PROD-016,"1587,00",cancelado
+21/06/2024,Cliente 110,España,PROD-026,267.52,cancelado
+15/09/2024,Cliente 173,Italia,PROD-048,63.17,cancelado
+2024/05/31,Cliente 011,GERMANY,PROD-023,1866.85,enviado
+03/09/2024,Cliente 168,España,PROD-044,110.58,cancelado
+2024-11-11,Cliente 012,España,PROD-028,1494.15,pendiente
+2025/05/10,Cliente 082,Portugal,PROD-047,295.90,pendiente
+2024-13-05,Cliente 166,España,PROD-017,668.06,enviado
+2024/10/02,Cliente 146,Portugal,PROD-031,740.27,pendiente
+05-02-2025,Cliente 101,Italia,PROD-005,1980.73,pendiente
+2024-12-17,Cliente 085,Portugal,PROD-027,1813.05,pendiente
+2024-10-02,Cliente 105,Portugal,PROD-041,820.08,enviado
