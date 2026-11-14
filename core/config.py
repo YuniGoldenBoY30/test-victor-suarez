@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import Annotated
 from urllib.parse import urlsplit
 
-from pydantic import SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -90,6 +90,12 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
     trusted_hosts: Annotated[list[str], NoDecode] = ["localhost", "127.0.0.1"]
     api_docs: bool = False
+    # Límite de tasa por IP (peticiones por minuto). `consulta` llama al LLM de pago.
+    rate_limit_enabled: bool = True
+    rate_limit_rpm: int = Field(60, ge=1)
+    rate_limit_consulta_rpm: int = Field(10, ge=1)
+    # Proxies de confianza delante del backend (0 = ninguno: se usa la IP del socket).
+    rate_limit_trusted_hops: int = Field(0, ge=0, le=10)
 
     @field_validator("cors_origins", "trusted_hosts", mode="before")
     @classmethod

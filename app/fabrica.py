@@ -16,7 +16,9 @@ from app.modelos import (
 from app.repositorio_vistas import RepositorioVistas
 from app.seguridad import (
     CSP_DOCS,
+    RUTA_CONSULTA,
     GuardaCuerpoJSON,
+    MiddlewareLimiteTasa,
     MiddlewareSeguridad,
     respuesta_error as _respuesta_error,
 )
@@ -52,8 +54,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url="/openapi.json" if docs else None,
     )
     # add_middleware antepone: el último añadido es el más externo.
-    # Orden externo -> interno: seguridad -> hosts de confianza -> CORS -> guarda de /consulta.
-    app.add_middleware(GuardaCuerpoJSON, ruta="/consulta")
+    # Orden externo -> interno: seguridad -> hosts de confianza -> CORS -> límite de tasa
+    # -> guarda de /consulta. El límite va dentro de CORS (el 429 lleva cabeceras CORS) y
+    # fuera de la guarda (se rechaza antes de leer el cuerpo).
+    app.add_middleware(GuardaCuerpoJSON, ruta=RUTA_CONSULTA)
+    if settings.rate_limit_enabled:
+        app.add_middleware(
+            MiddlewareLimiteTasa,
+            limite_general=settings.rate_limit_rpm,
+            limite_consulta=settings.rate_limit_consulta_rpm,
+            saltos_confianza=settings.rate_limit_trusted_hops,
+            ruta_consulta=RUTA_CONSULTA,
+        )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

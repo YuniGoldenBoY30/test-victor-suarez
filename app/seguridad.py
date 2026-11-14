@@ -1,6 +1,10 @@
-"""Middlewares ASGI de seguridad: cabeceras, 500 genérico y guarda de cuerpo de /consulta."""
+"""Middlewares ASGI de seguridad: cabeceras, 500 genérico, límite de tasa y guarda de /consulta."""
+import ipaddress
 import logging
-from collections.abc import Mapping
+import math
+import time
+from collections import OrderedDict, deque
+from collections.abc import Callable, Collection, Hashable, Mapping
 
 from starlette.datastructures import Headers, MutableHeaders
 from starlette.responses import JSONResponse
@@ -27,6 +31,7 @@ CABECERAS_SEGURIDAD = {
 }
 
 MAX_CUERPO_CONSULTA = 8192
+RUTA_CONSULTA = "/consulta"
 
 
 def respuesta_error(
@@ -92,7 +97,7 @@ class GuardaCuerpoJSON:
     def __init__(
         self,
         app: ASGIApp,
-        ruta: str = "/consulta",
+        ruta: str = RUTA_CONSULTA,
         max_bytes: int = MAX_CUERPO_CONSULTA,
     ) -> None:
         self.app = app
@@ -150,3 +155,167 @@ class GuardaCuerpoJSON:
             return await receive()
 
         await self.app(scope, reproducir, send)
+
+
+# --- Limitación de tasa por IP ------------------------------------------------------------------
+
+
+def _ip_valida(texto: str) -> str | None:
+    """Normaliza una IP (v4 o v6) para usarla como clave; `None` si no es una IP.
+
+    Una IPv6 se agrupa por su prefijo /64 (la asignación habitual a un solo cliente), para
+    que rotar la parte baja de la dirección no evada el límite. Una IPv4 mapeada en IPv6
+    (`::ffff:a.b.c.d`) cuenta como la IPv4. Se admite el sufijo `:puerto` en IPv4.
+    """
+    texto = texto.strip()
+    try:
+        ip = ipaddress.ip_address(texto)
+    except ValueError:
+        anfitrion, _, puerto = texto.rpartition(":")
+        if not puerto.isdigit():
+            return None
+        try:
+            ip = ipaddress.IPv4Address(anfitrion)
+        except ValueError:
+            return None
+    if isinstance(ip, ipaddress.IPv6Address):
+        if ip.ipv4_mapped is not None:
+            return str(ip.ipv4_mapped)
+        return str(ipaddress.IPv6Network((ip, 64), strict=False))
+    return str(ip)
+
+
+def ip_cliente(scope: Scope, saltos_confianza: int = 0) -> str:
+    """Clave de cliente de una petición HTTP, a prueba de `X-Forwarded-For` falsificado.
+
+    `X-Forwarded-For` lo puede escribir cualquiera, así que por defecto (`saltos_confianza=0`)
+    se ignora y se usa la IP del socket. Con N proxies de confianza (contando el último, el
+    que tiene conectado el backend) cada uno añade al final de la cabecera la IP de su
+    cliente, de modo que la dirección real es la N-ésima empezando por la derecha; lo que
+    haya a su izquierda lo puede haber puesto el cliente y no se mira. Si la cabecera trae
+    menos entradas de las esperadas (la petición no pasó por toda la cadena) o la entrada
+    no es una IP, se usa la IP del socket.
+    """
+    par = scope.get("client")
+    socket_ = par[0] if par else "desconocido"
+    if saltos_confianza > 0:
+        valores = Headers(scope=scope).getlist("x-forwarded-for")
+        entradas = [e.strip() for v in valores for e in v.split(",") if e.strip()]
+        if len(entradas) >= saltos_confianza:
+            ip = _ip_valida(entradas[-saltos_confianza])
+            if ip is not None:
+                return ip
+    return _ip_valida(socket_) or socket_
+
+
+class LimitadorVentana:
+    """Ventana deslizante en memoria: como mucho `limite` eventos por clave en `ventana` s.
+
+    Memoria acotada: una lista de marcas de tiempo por clave (nunca más de `limite`) y como
+    mucho `max_claves` claves; al llenarse se purgan las vencidas y, si no basta, se descarta
+    la clave menos usada recientemente. Los rechazos no se registran, así que el cliente
+    recupera el acceso exactamente `ventana` segundos después de su última petición admitida.
+    El estado es por proceso: con varios workers cada uno lleva su propia cuenta.
+    No usa awaits, por lo que en el bucle de eventos cada llamada es atómica.
+    """
+
+    def __init__(
+        self,
+        ventana: float = 60.0,
+        max_claves: int = 10_000,
+        reloj: Callable[[], float] = time.monotonic,
+        intervalo_purga: float = 10.0,
+    ) -> None:
+        self.ventana = ventana
+        self.max_claves = max_claves
+        self._reloj = reloj
+        self._intervalo_purga = intervalo_purga
+        self._ultima_purga = reloj()
+        self._marcas: OrderedDict[Hashable, deque[float]] = OrderedDict()
+
+    def __len__(self) -> int:
+        return len(self._marcas)
+
+    def _purgar(self, ahora: float) -> None:
+        self._ultima_purga = ahora
+        corte = ahora - self.ventana
+        for clave in [c for c, m in self._marcas.items() if not m or m[-1] <= corte]:
+            del self._marcas[clave]
+
+    def intentar(self, clave: Hashable, limite: int) -> int | None:
+        """Registra un evento. `None` si se admite; si no, los segundos (>= 1) hasta poder."""
+        ahora = self._reloj()
+        marcas = self._marcas.get(clave)
+        if marcas is None:
+            if len(self._marcas) >= self.max_claves:
+                if ahora - self._ultima_purga >= self._intervalo_purga:
+                    self._purgar(ahora)
+                if len(self._marcas) >= self.max_claves:
+                    self._marcas.popitem(last=False)
+            marcas = self._marcas[clave] = deque()
+        else:
+            self._marcas.move_to_end(clave)
+        corte = ahora - self.ventana
+        while marcas and marcas[0] <= corte:
+            marcas.popleft()
+        if len(marcas) >= limite:
+            return max(1, math.ceil(marcas[0] + self.ventana - ahora))
+        marcas.append(ahora)
+        return None
+
+
+class MiddlewareLimiteTasa:
+    """Limita las peticiones por IP: un cupo estricto para `POST <ruta_consulta>` y otro general.
+
+    `POST /consulta` llama al LLM de pago, por eso tiene su propio cupo, mucho menor. El resto
+    de rutas comparte el cupo general. Exentos: `OPTIONS` (preflight CORS) y `rutas_exentas`
+    (`/health`, que usa el healthcheck de Docker). Se coloca DENTRO de CORS, para que el 429
+    lleve cabeceras CORS y el navegador pueda leerlo, y FUERA de `GuardaCuerpoJSON`, para
+    rechazar antes de leer el cuerpo. El 429 usa el cuerpo de error uniforme y `Retry-After`.
+    """
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        limite_general: int = 60,
+        limite_consulta: int = 10,
+        saltos_confianza: int = 0,
+        ruta_consulta: str = RUTA_CONSULTA,
+        rutas_exentas: Collection[str] = ("/health",),
+        ventana: float = 60.0,
+        max_claves: int = 10_000,
+        reloj: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self.app = app
+        self.limite_general = limite_general
+        self.limite_consulta = limite_consulta
+        self.saltos_confianza = saltos_confianza
+        self.ruta_consulta = ruta_consulta
+        self.rutas_exentas = frozenset(rutas_exentas)
+        self.limitador = LimitadorVentana(ventana=ventana, max_claves=max_claves, reloj=reloj)
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if (
+            scope["type"] != "http"
+            or scope["method"] == "OPTIONS"
+            or scope["path"] in self.rutas_exentas
+        ):
+            await self.app(scope, receive, send)
+            return
+
+        if scope["method"] == "POST" and scope["path"] == self.ruta_consulta:
+            cupo, limite = "consulta", self.limite_consulta
+        else:
+            cupo, limite = "general", self.limite_general
+        espera = self.limitador.intentar((cupo, ip_cliente(scope, self.saltos_confianza)), limite)
+        if espera is None:
+            await self.app(scope, receive, send)
+            return
+
+        respuesta = respuesta_error(
+            429,
+            "demasiadas_peticiones",
+            f"Demasiadas peticiones. Inténtalo de nuevo en {espera} segundos.",
+        )
+        respuesta.headers["Retry-After"] = str(espera)
+        await respuesta(scope, receive, send)

@@ -204,6 +204,7 @@ Ejemplo:
 | Cuerpo inválido (validación de Pydantic) | 422 | respuesta por defecto de FastAPI |
 | `POST /consulta` con `Content-Type` distinto de `application/json` | 415 | `tipo_contenido_no_soportado` |
 | `POST /consulta` con cuerpo mayor de 8192 bytes (por `Content-Length` o contando bytes si es chunked) | 413 | `cuerpo_demasiado_grande` |
+| Más peticiones por minuto desde una IP que el cupo (incluye cabecera `Retry-After` en segundos) | 429 | `demasiadas_peticiones` |
 | Fallo no controlado | 500 | `error_interno` (mensaje genérico `Error interno del servidor.`) |
 | Host no incluido en `TRUSTED_HOSTS` | 400 | respuesta de `TrustedHostMiddleware` (sin cuerpo de la API) |
 
@@ -215,7 +216,9 @@ CORS: `CORSMiddleware` con `settings.cors_origins`, `allow_credentials=False`, m
 
 Cabeceras de seguridad en todas las respuestas: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store`, `Permissions-Policy: camera=(), microphone=(), geolocation=()` y `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`. Las rutas `/docs` y `/redoc` usan una CSP propia que permite el CDN de Swagger UI/ReDoc.
 
-Orden de middlewares (de fuera a dentro): seguridad, hosts de confianza, CORS, guarda de `/consulta`.
+Límite de tasa por IP: `MiddlewareLimiteTasa` (`app/seguridad.py`, sin dependencias) aplica una ventana deslizante de 60 s en memoria con dos cupos: `POST /consulta` (`RATE_LIMIT_CONSULTA_RPM`, 10 por defecto, porque cada llamada consume la clave de NVIDIA) y el resto de rutas (`RATE_LIMIT_RPM`, 60). Quedan exentos `OPTIONS` y `/health` (healthcheck de Docker). El 429 usa el cuerpo de error uniforme y `Retry-After`; los rechazos no consumen cupo. Va dentro de CORS (el 429 lleva cabeceras CORS) y fuera de la guarda de `/consulta` (rechaza antes de leer el cuerpo). La IP del cliente sale de `X-Forwarded-For` solo si `RATE_LIMIT_TRUSTED_HOPS` > 0: con N proxies de confianza (contando nginx, el que tiene conectado el backend) se toma la N-ésima entrada empezando por la derecha, porque lo que haya a su izquierda lo puede escribir el cliente; si la cabecera trae menos entradas o no es una IP, se usa la IP del socket. Las IPv6 se agrupan por /64. Límites conocidos: el estado es por proceso (con varios workers de uvicorn cada uno cuenta aparte; hoy hay uno) y se pierde al reiniciar; la tabla guarda como mucho 10 000 IPs y descarta la menos reciente.
+
+Orden de middlewares (de fuera a dentro): seguridad, hosts de confianza, CORS, límite de tasa, guarda de `/consulta`.
 
 ## 10. Configuración
 
@@ -229,8 +232,12 @@ Orden de middlewares (de fuera a dentro): seguridad, hosts de confianza, CORS, g
 | `CORS_ORIGINS` | `cors_origins` | `http://localhost:5173` | lista separada por comas o JSON. Cada origen se valida: solo `http(s)://host[:puerto]`; se rechazan `*`, `null`, credenciales, ruta, consulta y fragmento. Se normaliza a minúsculas y se quita una barra final. |
 | `TRUSTED_HOSTS` | `trusted_hosts` | `localhost,127.0.0.1` | lista de hosts sin puerto; admite `*.dominio` como comodín inicial, nunca `*` solo. No puede quedar vacía. Controla `TrustedHostMiddleware`. **En producción debe incluir el host público `test.zenixtech.ai`**: Apache (`ProxyPreserveHost On`) y nginx (`proxy_set_header Host $host`) reenvían ese `Host` al backend; si no está en la lista, todas las peticiones proxied devuelven **400**. |
 | `API_DOCS` | `api_docs` | `false` | `true` activa `/docs`, `/redoc` y `/openapi.json`. Con `false` esas rutas no existen (404). Desactivado en producción. |
+| `RATE_LIMIT_ENABLED` | `rate_limit_enabled` | `true` | `false` desactiva el límite de tasa (el middleware no se monta). |
+| `RATE_LIMIT_RPM` | `rate_limit_rpm` | `60` | peticiones por minuto y por IP en las rutas generales (entero >= 1). |
+| `RATE_LIMIT_CONSULTA_RPM` | `rate_limit_consulta_rpm` | `10` | peticiones por minuto y por IP en `POST /consulta` (entero >= 1). |
+| `RATE_LIMIT_TRUSTED_HOPS` | `rate_limit_trusted_hops` | `0` | proxies de confianza delante del backend (0 a 10). Con `0` se ignora `X-Forwarded-For` y se usa la IP del socket, que detrás de nginx es siempre la de nginx (un único cupo para todos). Debe ser exacto: de menos, todos comparten cupo; de más, el cliente puede falsificar su IP. `docker-compose.yml` lo fija a `3` (Cloudflare, Apache, nginx), sobrescribible con la variable del mismo nombre. |
 
-`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`, `TRUSTED_HOSTS=`, `API_DOCS=`.
+`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`, `TRUSTED_HOSTS=`, `API_DOCS=`, `RATE_LIMIT_ENABLED=`, `RATE_LIMIT_RPM=`, `RATE_LIMIT_CONSULTA_RPM=`, `RATE_LIMIT_TRUSTED_HOPS=`.
 
 Ejemplo de producción (valores ilustrativos, sin secretos):
 
@@ -256,6 +263,7 @@ Frontend, cabeceras y CSP: `frontend/index.html` carga el tema con `<script src=
   - Documentación de la API desactivada por defecto (`API_DOCS=false`).
   - Cabeceras de seguridad y CSP `default-src 'none'` en todas las respuestas de la API (ver 9.5).
   - `POST /consulta`: exige `application/json` (415) y limita el cuerpo a 8192 bytes (413).
+  - Límite de tasa por IP, más estricto en `POST /consulta` (429 con `Retry-After`; ver 9.5 y 10).
   - Frontend: URL base sin valores fijos en código (`VITE_API_URL` validado), peticiones sin credenciales, comprobación de `Content-Type` JSON antes de parsear, tema cargado desde script externo, sin `innerHTML`/`eval`.
 - Contenedor backend con usuario no root; `.dockerignore` excluye secretos.
 - Fuera de alcance: autenticación (no hay JWT, login ni cookies de sesión).

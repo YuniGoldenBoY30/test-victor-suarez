@@ -7,6 +7,10 @@ services:
       DUCKDB_PATH: /app/data/pedidos.duckdb
       # Hosts aceptados por la API (TrustedHostMiddleware). Sobrescribible con TRUSTED_HOSTS.
       TRUSTED_HOSTS: "${TRUSTED_HOSTS:-localhost,127.0.0.1,test.zenixtech.ai}"
+      # Proxies de confianza delante del backend para el limite de tasa por IP:
+      # Cloudflare -> Apache -> nginx = 3 (X-Forwarded-For: cliente, Cloudflare, Apache).
+      # Debe coincidir con la cadena real; sin Cloudflare/Apache usa el numero que toque.
+      RATE_LIMIT_TRUSTED_HOPS: "${RATE_LIMIT_TRUSTED_HOPS:-3}"
     volumes:
       - datos:/app/data
     # Sin puertos publicados: solo accesible desde el frontend

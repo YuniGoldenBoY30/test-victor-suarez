@@ -6,6 +6,7 @@ from core import esquema
 
 VARIABLES = [
     "API_IA_NVIDIA", "NVIDIA_MODEL", "DUCKDB_PATH", "CORS_ORIGINS", "TRUSTED_HOSTS", "API_DOCS",
+    "RATE_LIMIT_ENABLED", "RATE_LIMIT_RPM", "RATE_LIMIT_CONSULTA_RPM", "RATE_LIMIT_TRUSTED_HOPS",
 ]
 
 
@@ -36,6 +37,10 @@ def test_valores_por_defecto(monkeypatch):
     assert s.cors_origins == ["http://localhost:5173"]
     assert s.trusted_hosts == ["localhost", "127.0.0.1"]
     assert s.api_docs is False
+    assert s.rate_limit_enabled is True
+    assert s.rate_limit_rpm == 60
+    assert s.rate_limit_consulta_rpm == 10
+    assert s.rate_limit_trusted_hops == 0
 
 
 def test_variables_de_entorno(monkeypatch):
@@ -58,6 +63,8 @@ def test_valores_vacios_usan_defecto(monkeypatch):
     assert s.cors_origins == ["http://localhost:5173"]
     assert s.trusted_hosts == ["localhost", "127.0.0.1"]
     assert s.api_docs is False
+    assert (s.rate_limit_enabled, s.rate_limit_rpm) == (True, 60)
+    assert (s.rate_limit_consulta_rpm, s.rate_limit_trusted_hops) == (10, 0)
 
 
 def test_clave_no_aparece_en_repr(monkeypatch):
@@ -185,3 +192,33 @@ def test_api_docs_desde_entorno(monkeypatch, texto, esperado):
     _limpiar(monkeypatch)
     monkeypatch.setenv("API_DOCS", texto)
     assert Settings(_env_file=None).api_docs is esperado
+
+
+def test_limite_de_tasa_desde_entorno(monkeypatch):
+    _limpiar(monkeypatch)
+    monkeypatch.setenv("RATE_LIMIT_ENABLED", "false")
+    monkeypatch.setenv("RATE_LIMIT_RPM", "120")
+    monkeypatch.setenv("RATE_LIMIT_CONSULTA_RPM", "5")
+    monkeypatch.setenv("RATE_LIMIT_TRUSTED_HOPS", "3")
+    s = Settings(_env_file=None)
+    assert s.rate_limit_enabled is False
+    assert (s.rate_limit_rpm, s.rate_limit_consulta_rpm, s.rate_limit_trusted_hops) == (120, 5, 3)
+
+
+@pytest.mark.parametrize(
+    "variable, valor",
+    [
+        ("RATE_LIMIT_RPM", "0"),
+        ("RATE_LIMIT_RPM", "-1"),
+        ("RATE_LIMIT_RPM", "muchas"),
+        ("RATE_LIMIT_CONSULTA_RPM", "0"),
+        ("RATE_LIMIT_TRUSTED_HOPS", "-1"),
+        ("RATE_LIMIT_TRUSTED_HOPS", "11"),
+        ("RATE_LIMIT_ENABLED", "quizas"),
+    ],
+)
+def test_limite_de_tasa_invalido_rechazado(monkeypatch, variable, valor):
+    _limpiar(monkeypatch)
+    monkeypatch.setenv(variable, valor)
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
