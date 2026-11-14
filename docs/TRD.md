@@ -38,6 +38,7 @@ Entorno: Python 3.14 (venv en `.venv`), Node 24 / npm 11, Docker 29 con compose 
 | `app/prompt.py` | `construir_mensajes(pregunta)`. |
 | `app/db.py` | `abrir_conexion_lectura(path)`. |
 | `app/errores.py` | `BaseDatosNoDisponibleError`, `ErrorEjecucionSQL`. |
+| `app/limites.py` | `LimitadorConsultas` (ventana deslizante por cliente y tope diario global, reloj inyectable), `LimiteExcedidoError`, `resolver_ip_cliente`. Sin FastAPI. |
 | `app/servicio.py` | `ServicioConsultas` y `ResultadoConsulta`. Sin FastAPI. |
 | `app/repositorio_vistas.py` | `RepositorioVistas`: SQL fijo y parametrizado de las vistas. Sin FastAPI. |
 | `app/modelos.py` | Modelos pydantic de petición y respuesta. |
@@ -48,7 +49,7 @@ Otros archivos de la raíz: `requirements.txt`, `pytest.ini` (`pythonpath=.`, `t
 
 ### 3.2 Tests
 
-`tests/conftest.py` (propiedad del paso ETL: fixture `db_prueba(tmp_path)` con una base pequeña de filas conocidas, incluida una `cancelado`; los pasos posteriores la reutilizan sin editarla), `test_config.py`, `test_generador.py`, `test_limpieza.py`, `test_carga_vistas.py`, `test_validador_sql.py`, `test_servicio.py`, `test_repositorio_vistas.py`, `test_api.py`.
+`tests/conftest.py` (propiedad del paso ETL: fixture `db_prueba(tmp_path)` con una base pequeña de filas conocidas, incluida una `cancelado`; los pasos posteriores la reutilizan sin editarla), `test_config.py`, `test_generador.py`, `test_limpieza.py`, `test_carga_vistas.py`, `test_validador_sql.py`, `test_servicio.py`, `test_repositorio_vistas.py`, `test_api.py`, `test_limites.py`.
 
 ### 3.3 Frontend (`frontend/`, Vite + React + TypeScript)
 
@@ -221,10 +222,14 @@ Ejemplo:
 | Cuerpo inválido (validación de Pydantic) | 422 | respuesta por defecto de FastAPI |
 | `POST /consulta` con `Content-Type` distinto de `application/json` | 415 | `tipo_contenido_no_soportado` |
 | `POST /consulta` con cuerpo mayor de 8192 bytes (por `Content-Length` o contando bytes si es chunked) | 413 | `cuerpo_demasiado_grande` |
+| `POST /consulta`: el cliente superó `LIMITE_CONSULTAS_MINUTO` o `LIMITE_CONSULTAS_HORA` | 429 | `limite_peticiones` (con `Retry-After`) |
+| `POST /consulta`: se alcanzó el tope diario global `LIMITE_CONSULTAS_DIA` (día UTC) | 429 | `limite_diario` (con `Retry-After`) |
 | Fallo no controlado | 500 | `error_interno` (mensaje genérico `Error interno del servidor.`) |
 | Host no incluido en `TRUSTED_HOSTS` | 400 | respuesta de `TrustedHostMiddleware` (sin cuerpo de la API) |
 
-Origen de cada excepción: `LLMNoConfiguradoError` y `LLMError` en `app.llm`; `SQLNoPermitidoError` en `app.validador_sql`; `BaseDatosNoDisponibleError` y `ErrorEjecucionSQL` en `app.errores`. Los mensajes no incluyen la clave ni trazas.
+Los 429 usan el mismo cuerpo `{"error", "mensaje"}` y llevan la cabecera `Retry-After` con los segundos enteros (mínimo 1) que faltan para poder reintentar: lo que tarda en caducar la marca que bloquea la ventana (en el 429 por cliente, el mayor de minuto y hora) o, en `limite_diario`, lo que falta hasta las 00:00 UTC. Pasan por `MiddlewareSeguridad` y CORS como el resto de respuestas (cabeceras de seguridad y CORS), y `CORSMiddleware` expone `Retry-After` (`expose_headers`) para que un frontend de otro origen pueda leerlo. Los mensajes no revelan contadores ni la IP.
+
+Origen de cada excepción: `LLMNoConfiguradoError` y `LLMError` en `app.llm`; `SQLNoPermitidoError` en `app.validador_sql`; `BaseDatosNoDisponibleError` y `ErrorEjecucionSQL` en `app.errores`; `LimiteExcedidoError` en `app.limites` (la lanza el endpoint y la convierte en 429 un manejador de `create_app`). Los mensajes no incluyen la clave ni trazas.
 
 El 500 genérico lo produce `MiddlewareSeguridad` (`app/seguridad.py`), el middleware más externo: registra la traza solo en el log del servidor y devuelve cabeceras de seguridad también en el error. Los errores 413 y 415 los produce `GuardaCuerpoJSON` (solo para `POST /consulta`), que se ejecuta dentro de CORS para que la respuesta lleve cabeceras CORS.
 
@@ -245,9 +250,13 @@ Orden de middlewares (de fuera a dentro): seguridad, hosts de confianza, CORS, g
 | `DUCKDB_PATH` | `duckdb_path` | `data/pedidos.duckdb` | |
 | `CORS_ORIGINS` | `cors_origins` | `http://localhost:5173` | lista separada por comas o JSON. Cada origen se valida: solo `http(s)://host[:puerto]`; se rechazan `*`, `null`, credenciales, ruta, consulta y fragmento. Se normaliza a minúsculas y se quita una barra final. |
 | `TRUSTED_HOSTS` | `trusted_hosts` | `localhost,127.0.0.1` | lista de hosts sin puerto; admite `*.dominio` como comodín inicial, nunca `*` solo. No puede quedar vacía. Controla `TrustedHostMiddleware`. **En producción debe incluir el host público `test.zenixtech.ai`**: Apache (`ProxyPreserveHost On`) y nginx (`proxy_set_header Host $host`) reenvían ese `Host` al backend; si no está en la lista, todas las peticiones proxied devuelven **400**. |
+| `LIMITE_CONSULTAS_MINUTO` | `limite_consultas_minuto` | `10` | Máximo de `POST /consulta` por cliente en una ventana deslizante de 60 s. Entero >= 0; `0` desactiva este límite. |
+| `LIMITE_CONSULTAS_HORA` | `limite_consultas_hora` | `60` | Ídem en 3600 s. Entero >= 0; `0` lo desactiva. |
+| `LIMITE_CONSULTAS_DIA` | `limite_consultas_dia` | `500` | Tope global (todos los clientes) de consultas por día UTC; se reinicia a las 00:00 UTC. Entero >= 0; `0` lo desactiva. |
+| `CABECERA_IP_CLIENTE` | `cabecera_ip_cliente` | vacío | Nombre de la cabecera de la que leer la IP del cliente (en producción `X-Cliente-IP`). Vacío: se usa la IP de la conexión TCP. Solo caracteres de token HTTP; `X-Forwarded-For` y `Forwarded` se rechazan al arrancar. Ver sección 11. |
 | `API_DOCS` | `api_docs` | `false` | `true` activa `/docs`, `/redoc` y `/openapi.json`. Con `false` esas rutas no existen (404). Desactivado en producción. |
 
-`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`, `TRUSTED_HOSTS=`, `API_DOCS=`.
+`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`, `TRUSTED_HOSTS=`, `API_DOCS=`, `LIMITE_CONSULTAS_MINUTO=`, `LIMITE_CONSULTAS_HORA=`, `LIMITE_CONSULTAS_DIA=`, `CABECERA_IP_CLIENTE=`.
 
 Ejemplo de producción (valores ilustrativos, sin secretos):
 
@@ -255,7 +264,10 @@ Ejemplo de producción (valores ilustrativos, sin secretos):
 CORS_ORIGINS=https://test.zenixtech.ai
 TRUSTED_HOSTS=test.zenixtech.ai,127.0.0.1,localhost
 API_DOCS=false
+CABECERA_IP_CLIENTE=X-Cliente-IP
 ```
+
+Los límites toman efecto al arrancar el proceso (se leen en `create_app`).
 
 Frontend: `VITE_API_URL` solo admite una ruta (`/api`) o una URL `http(s)` sin credenciales. Si se omite: en desarrollo `http://localhost:8000` y en producción `/api` (mismo origen, proxy de nginx). Docker Compose construye la imagen con `VITE_API_URL=/api`. La URL base no lleva secretos en el código.
 
@@ -274,6 +286,13 @@ Frontend, cabeceras y CSP: `frontend/index.html` carga el tema con `<script src=
   - Cabeceras de seguridad y CSP `default-src 'none'` en todas las respuestas de la API (ver 9.5).
   - `POST /consulta`: exige `application/json` (415) y limita el cuerpo a 8192 bytes (413).
   - Frontend: URL base sin valores fijos en código (`VITE_API_URL` validado), peticiones sin credenciales, comprobación de `Content-Type` JSON antes de parsear, tema cargado desde script externo, sin `innerHTML`/`eval`.
+- Límites de uso (la aplicación es pública y no tiene login, ver «Fuera de alcance»; cada `POST /consulta` que llega al LLM gasta la clave de NVIDIA):
+  - Por cliente: `LIMITE_CONSULTAS_MINUTO` y `LIMITE_CONSULTAS_HORA` (ventana deslizante en memoria) y, para toda la aplicación, un tope diario `LIMITE_CONSULTAS_DIA` por día UTC. Solo afectan a `POST /consulta`; los `GET` no se limitan.
+  - Orden: primero 413/415 (middleware) y 422 (validación del cuerpo), que no consumen cuota; después se comprueba el límite del cliente y luego el diario, antes de llamar al LLM. Una petición rechazada por límite nunca llega a NVIDIA, no se anota y por tanto no alarga el bloqueo. Las peticiones que sí llegan al LLM cuentan aunque este falle o el SQL se rechace (el gasto ya existe). Los rechazos se registran como mucho una vez por cliente y ventana, y el tope diario una vez por día UTC; el cliente aparece en el log como un hash corto con sal por proceso, nunca como IP.
+  - IP del cliente: con `CABECERA_IP_CLIENTE` vacío se usa la IP de la conexión TCP (`request.client.host`). Con valor, se usa esa cabecera solo si llega exactamente un valor y es una IP válida (módulo `ipaddress`); si falta, está repetida, lleva comas, puerto o texto arbitrario, se usa la IP de la conexión. Las IPv6 se agrupan por /64 y una IPv4 mapeada cuenta como IPv4.
+  - Por qué la cabecera solo se confía cuando está configurada: cualquier cliente puede enviar cualquier cabecera. Con ella configurada, el backend asume que solo es alcanzable a través de un proxy que **sobrescribe** esa cabecera con la IP real (en producción Apache, p. ej. `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` con la IP real resuelta por `mod_remoteip` si hay otro proxy delante; el nginx del frontend reenvía las cabeceras del cliente sin tocarlas) y que el puerto del backend no se publica fuera de la red de Compose (hoy solo `expose`). En producción Apache fija `X-Cliente-IP` con la IP real del cliente (vía `mod_remoteip`), así que `CABECERA_IP_CLIENTE=X-Cliente-IP` es el valor de producción. Ese vhost está en `deploy/apache/test.zenixtech.ai.conf` (PR #6) y ya está aplicado en el VPS; `deploy/desplegar.py` escribe `CABECERA_IP_CLIENTE=X-Cliente-IP` en el `.env` del servidor. Sin ese vhost delante (desarrollo local o Docker sin Apache), `CABECERA_IP_CLIENTE` debe quedar vacío. Si no se cumple, un atacante rota la cabecera y evade el límite por cliente; por eso el defecto es no confiar. `X-Forwarded-For` no se interpreta nunca: lo escribe y amplía el cliente, y la configuración rechaza usarlo como cabecera de IP. El tope diario global limita el gasto aunque el límite por cliente se evada.
+  - La IP de la conexión es la que ve el backend: tras nginx o Apache sin cabecera configurada sería la del proxy y todos los clientes compartirían una sola cuota. Uvicorn solo reescribe `request.client` desde `X-Forwarded-For` cuando el par TCP está en `FORWARDED_ALLOW_IPS` (por defecto `127.0.0.1`).
+  - Limitaciones: el estado está en memoria de un único proceso (un worker de uvicorn) y se pierde al reiniciar; con varios workers o réplicas cada proceso contaría por separado y haría falta un almacén compartido. Un tope global agotado deja sin servicio a todos hasta las 00:00 UTC (es el precio de acotar el gasto); el límite por cliente reduce que un solo cliente lo agote. No sustituye a la autenticación.
 - Contenedor backend con usuario no root; `.dockerignore` excluye secretos.
 - Fuera de alcance: autenticación (no hay JWT, login ni cookies de sesión).
 

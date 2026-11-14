@@ -189,7 +189,7 @@ Los errores que el generador introduce a propósito son: duplicados exactos, for
 
 ## 7. Con más tiempo haría
 
-- Autenticación y limitación de peticiones (rate limiting): el VPS es público.
+- Autenticación de usuarios: el VPS es público y la API no tiene login. (La limitación de peticiones por cliente y el tope diario ya están implementados; ver docs/TRD.md, sección 11.)
 - Registro de auditoría de preguntas y SQL generado.
 - Pregunta de aclaración cuando el mes no trae año.
 - Caché de respuestas del LLM.
