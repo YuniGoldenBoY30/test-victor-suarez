@@ -222,7 +222,7 @@ Qué se aceptó del resultado: el diseño general, la estructura de ficheros y e
 
 Qué se hizo a mano o lo decidió la persona: el stack, las reglas de trabajo (commits por paso, PRs, no subir `.env` nunca) y la aceptación del despliegue en el VPS.
 
-> **Notas del autor:** _(completar)_
+> **Notas del autor:** _Yuniel Silva_
 
 ## 9. Documentación
 
