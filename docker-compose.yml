@@ -17,6 +17,26 @@ services:
       retries: 6
       start_period: 15s
     restart: unless-stopped
+    # Limites medidos (ver docs/TRD.md 3.4): pico 174 MiB, 369 PIDs (hilos de DuckDB) bajo carga
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+          pids: 512
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    memswap_limit: 512M
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   frontend:
     build:
@@ -29,6 +49,26 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    # Limites medidos (ver docs/TRD.md 3.4): pico 25 MiB, 19 PIDs bajo carga
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 64M
+          pids: 64
+        reservations:
+          cpus: "0.05"
+          memory: 16M
+    memswap_limit: 64M
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   datos:
