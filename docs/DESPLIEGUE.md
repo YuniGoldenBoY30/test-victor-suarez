@@ -59,7 +59,7 @@ El vhost versionado está en `deploy/apache/test.zenixtech.ai.conf`. Se copia a 
 - `ProxyPass / http://127.0.0.1:8080/` y `ProxyPassReverse` iguales.
 - `ProxyTimeout 60`, porque `POST /consulta` espera al LLM.
 - El vhost del puerto 80 solo redirige a HTTPS.
-- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend la usará para limitar las consultas por IP (`CABECERA_IP_CLIENTE=X-Cliente-IP`; pendiente, ver sección 7). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
+- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend limita las consultas por esa cabecera (`CABECERA_IP_CLIENTE=X-Cliente-IP`, ver sección 7). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
 - **Cabeceras del HTML:** `Strict-Transport-Security: max-age=31536000; includeSubDomains` (siempre, porque solo quien termina TLS puede ponerla), y con `setifempty`, para no pisar las más estrictas de la API: `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` y una CSP. `setifempty` actúa sobre la tabla `onsuccess`, que es la que ve las cabeceras del backend, pero solo se aplica a respuestas 2xx y 3xx. Los errores de la API (4xx y 5xx, también el 429) reciben HSTS y las cabeceras que pone el propio backend.
 - **CSP en modo informe** (`Content-Security-Policy-Report-Only`): Cloudflare inyecta un script en línea (`/cdn-cgi/challenge-platform`) que una CSP estricta bloquearía. Se pasará a `Content-Security-Policy` cuando la consola del navegador no muestre avisos que importen.
 
@@ -138,7 +138,7 @@ Las dos últimas filas comprueban `TRUSTED_HOSTS` a través de nginx, sin depend
   - Puerto 8000 cerrado desde fuera.
 - Pruebas de `Host` (filas de la tabla de la sección 6), comprobadas en local con las imágenes reconstruidas desde cero (paso s1, e000282): sin cabecera `Host` → `200`; `Host: test.zenixtech.ai` → `200`; `Host: evil.example` → `400`.
 - El VPS sigue ejecutando el commit `35005f0` (anterior a PR #4). Ahí el comportamiento de `Host` aplicará cuando se redespliegue `main`; hasta entonces no se ha comprobado en el VPS.
-- En esa fecha no había cabecera HSTS; la añadió después el vhost endurecido (tercera prueba). Siguen pendientes la autenticación y el límite de tasa (ver sección 7).
+- En esa fecha no había cabecera HSTS; la añadió después el vhost endurecido (tercera prueba). El límite de tasa llegó después en el backend (sección 7); la autenticación sigue fuera de alcance.
 
 ### Primera prueba (2026-11-14), histórica
 
@@ -174,6 +174,6 @@ Tras `desplegar.py vhost` con el vhost endurecido (`configtest` correcto, `reloa
 - `.env` está en `.gitignore`. Las credenciales del VPS no se copian a imágenes, al servidor ni a los documentos.
 - Recomendado: desactivar `PasswordAuthentication` en el VPS una vez dada de alta la clave, y no usar `root` para desplegar.
 - **Acceso público sin login:** `test.zenixtech.ai` es accesible por cualquiera y cada pregunta consume la clave de NVIDIA. La autenticación sigue fuera de alcance (ver `revision-arquitectura.md`, sección 6).
-- **Límite de tasa (pendiente):** Apache ya fija `X-Cliente-IP` con la IP real del cliente (sección 4) y el script de despliegue escribe `CABECERA_IP_CLIENTE=X-Cliente-IP`, pero el límite de `POST /consulta` por IP y el tope diario global todavía no están en `main` (se desarrollan en la rama `feat/limite-consultas`). Hasta entonces la variable no tiene efecto.
+- **Límite de tasa:** el backend limita `POST /consulta` por IP de cliente (10/min y 60/h por defecto) y con un tope diario global (500 llamadas al LLM por día UTC), y responde `429` con `Retry-After`. La IP sale de `X-Cliente-IP`, que Apache sobrescribe con la IP real (sección 4); el script de despliegue escribe `CABECERA_IP_CLIENTE=X-Cliente-IP`. Detalle en `docs/TRD.md`.
 - **HSTS:** lo pone Apache desde el vhost endurecido (tercera prueba de la sección 6).
 - **Si hace falta cerrar el entorno de pruebas del todo:** autenticación básica de Apache (`AuthType Basic`) en el vhost, con la contraseña gestionada por el responsable fuera del repositorio.
