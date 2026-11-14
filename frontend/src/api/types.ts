@@ -24,8 +24,8 @@ export interface ConsultaPeticion {
   pregunta: string
 }
 
-/** Valor de una celda del resultado: fechas ISO, decimales como número. */
-export type ValorCelda = string | number | boolean | null
+/** Valor de una celda del resultado: fechas ISO, decimales como número; listas y structs de DuckDB llegan anidados. */
+export type ValorCelda = string | number | boolean | null | ValorCelda[] | { [clave: string]: ValorCelda }
 
 /** Respuesta 200 de POST /consulta. */
 export interface ConsultaRespuesta {

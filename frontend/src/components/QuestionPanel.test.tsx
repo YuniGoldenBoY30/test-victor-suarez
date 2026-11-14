@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { QuestionPanel, PREGUNTAS_EJEMPLO } from './QuestionPanel'
 import { ErrorNotice } from './ErrorNotice'
+import { ResultTable, textoCelda } from './ResultTable'
 import { MENSAJES_ERROR, presentarError } from '../lib/mensajesError'
 import { ApiError } from '../api'
 
@@ -139,5 +140,18 @@ describe('ErrorNotice y mensajes por código', () => {
 
   it('trata una excepción desconocida como error inesperado', () => {
     expect(presentarError(new Error('boom')).codigo).toBe('error_desconocido')
+  })
+})
+
+describe('ResultTable con celdas anidadas', () => {
+  it('muestra listas y structs como JSON', () => {
+    render(<ResultTable columnas={['lista', 'obj']} filas={[[[1, 2], { a: 'x', b: [true, null] }]]} />)
+    expect(screen.getByText('[1,2]')).toBeInTheDocument()
+    expect(screen.getByText('{"a":"x","b":[true,null]}')).toBeInTheDocument()
+  })
+
+  it('textoCelda mantiene el formato de los escalares', () => {
+    expect(textoCelda(null)).toBe('—')
+    expect(textoCelda(true)).toBe('Sí')
   })
 })

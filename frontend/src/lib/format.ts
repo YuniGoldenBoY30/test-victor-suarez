@@ -47,7 +47,7 @@ const FECHA_ISO = /^\d{4}-\d{2}-\d{2}$/
 const formatoFecha = new Intl.DateTimeFormat(LOCALE, { dateStyle: 'medium', timeZone: 'UTC' })
 
 /** Texto de una celda del resultado dinámico. */
-export function formatearCelda(valor: ValorCelda): string {
+export function formatearCelda(valor: Exclude<ValorCelda, object>): string {
   if (valor === null) return '—'
   if (typeof valor === 'number') return formatoNumero.format(valor)
   if (typeof valor === 'boolean') return valor ? 'Sí' : 'No'

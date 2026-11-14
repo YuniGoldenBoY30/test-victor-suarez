@@ -9,6 +9,11 @@ interface Props {
   filas: ValorCelda[][]
 }
 
+/** Texto de una celda: los valores anidados (listas, structs) se muestran como JSON. */
+export function textoCelda(valor: ValorCelda): string {
+  return typeof valor === 'object' && valor !== null ? JSON.stringify(valor) : formatearCelda(valor)
+}
+
 /** Tabla dinámica: columnas y celdas vienen del resultado de la consulta. */
 export function ResultTable({ columnas, filas }: Props) {
   if (filas.length === 0) {
@@ -46,7 +51,7 @@ export function ResultTable({ columnas, filas }: Props) {
               <tr key={r}>
                 {columnas.map((_, i) => (
                   <td key={i} className={numericas[i] ? 'num' : undefined}>
-                    {formatearCelda(fila[i] ?? null)}
+                    {textoCelda(fila[i] ?? null)}
                   </td>
                 ))}
               </tr>
