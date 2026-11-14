@@ -30,13 +30,17 @@ MAX_CUERPO_CONSULTA = 8192
 
 
 def respuesta_error(
-    estado: int, codigo: str, mensaje: str, sql: str | None = None
+    estado: int,
+    codigo: str,
+    mensaje: str,
+    sql: str | None = None,
+    cabeceras: Mapping[str, str] | None = None,
 ) -> JSONResponse:
     """Cuerpo de error uniforme de la API: {"error", "mensaje"[, "sql"]}."""
     cuerpo = {"error": codigo, "mensaje": mensaje}
     if sql is not None:
         cuerpo["sql"] = sql
-    return JSONResponse(status_code=estado, content=cuerpo)
+    return JSONResponse(status_code=estado, content=cuerpo, headers=dict(cabeceras or {}))
 
 
 class MiddlewareSeguridad:
