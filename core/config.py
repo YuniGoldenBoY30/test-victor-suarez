@@ -83,7 +83,7 @@ class Settings(BaseSettings):
     )
 
     api_ia_nvidia: SecretStr | None = None
-    nvidia_model: str = "meta/llama-3.3-70b-instruct"
+    nvidia_model: str = "nvidia/nemotron-3-ultra-550b-a55b"
     nvidia_base_url: str = "https://integrate.api.nvidia.com/v1"
     llm_timeout: float = 30
     duckdb_path: str = "data/pedidos.duckdb"

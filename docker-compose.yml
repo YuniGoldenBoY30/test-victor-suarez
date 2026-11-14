@@ -1,0 +1,34 @@
+services:
+  backend:
+    build: .
+    env_file: .env
+    environment:
+      # Ruta fija dentro del contenedor (sobrescribe el valor de .env)
+      DUCKDB_PATH: /app/data/pedidos.duckdb
+    volumes:
+      - datos:/app/data
+    # Sin puertos publicados: solo accesible desde el frontend
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).status == 200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  datos:

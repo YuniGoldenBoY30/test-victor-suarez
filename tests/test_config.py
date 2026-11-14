@@ -29,7 +29,7 @@ def test_valores_por_defecto(monkeypatch):
     _limpiar(monkeypatch)
     s = Settings(_env_file=None)
     assert s.api_ia_nvidia is None
-    assert s.nvidia_model == "meta/llama-3.3-70b-instruct"
+    assert s.nvidia_model == "nvidia/nemotron-3-ultra-550b-a55b"
     assert s.nvidia_base_url == "https://integrate.api.nvidia.com/v1"
     assert s.llm_timeout == 30
     assert s.duckdb_path == "data/pedidos.duckdb"
