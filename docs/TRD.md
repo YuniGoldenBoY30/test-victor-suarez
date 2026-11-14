@@ -201,11 +201,21 @@ Ejemplo:
 | SQL rechazado por el validador (incluye campo `sql`) | 422 | `sql_no_valida` |
 | Error al ejecutar el SQL | 422 | `error_ejecucion` |
 | Base de datos no disponible | 503 | `base_datos_no_disponible` |
-| Cuerpo inválido | 422 | respuesta por defecto de FastAPI |
+| Cuerpo inválido (validación de Pydantic) | 422 | respuesta por defecto de FastAPI |
+| `POST /consulta` con `Content-Type` distinto de `application/json` | 415 | `tipo_contenido_no_soportado` |
+| `POST /consulta` con cuerpo mayor de 8192 bytes (por `Content-Length` o contando bytes si es chunked) | 413 | `cuerpo_demasiado_grande` |
+| Fallo no controlado | 500 | `error_interno` (mensaje genérico `Error interno del servidor.`) |
+| Host no incluido en `TRUSTED_HOSTS` | 400 | respuesta de `TrustedHostMiddleware` (sin cuerpo de la API) |
 
 Origen de cada excepción: `LLMNoConfiguradoError` y `LLMError` en `app.llm`; `SQLNoPermitidoError` en `app.validador_sql`; `BaseDatosNoDisponibleError` y `ErrorEjecucionSQL` en `app.errores`. Los mensajes no incluyen la clave ni trazas.
 
-CORS: `CORSMiddleware` con `settings.cors_origins`.
+El 500 genérico lo produce `MiddlewareSeguridad` (`app/seguridad.py`), el middleware más externo: registra la traza solo en el log del servidor y devuelve cabeceras de seguridad también en el error. Los errores 413 y 415 los produce `GuardaCuerpoJSON` (solo para `POST /consulta`), que se ejecuta dentro de CORS para que la respuesta lleve cabeceras CORS.
+
+CORS: `CORSMiddleware` con `settings.cors_origins`, `allow_credentials=False`, métodos `GET`, `POST`, `OPTIONS` y cabeceras `Content-Type` y `Accept`.
+
+Cabeceras de seguridad en todas las respuestas: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store`, `Permissions-Policy: camera=(), microphone=(), geolocation=()` y `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`. Las rutas `/docs` y `/redoc` usan una CSP propia que permite el CDN de Swagger UI/ReDoc.
+
+Orden de middlewares (de fuera a dentro): seguridad, hosts de confianza, CORS, guarda de `/consulta`.
 
 ## 10. Configuración
 
@@ -216,20 +226,39 @@ CORS: `CORSMiddleware` con `settings.cors_origins`.
 | (sin variable) | `nvidia_base_url` | `https://integrate.api.nvidia.com/v1` | |
 | (sin variable) | `llm_timeout` | `30` | segundos |
 | `DUCKDB_PATH` | `duckdb_path` | `data/pedidos.duckdb` | |
-| `CORS_ORIGINS` | `cors_origins` | `http://localhost:5173` | lista |
+| `CORS_ORIGINS` | `cors_origins` | `http://localhost:5173` | lista separada por comas o JSON. Cada origen se valida: solo `http(s)://host[:puerto]`; se rechazan `*`, `null`, credenciales, ruta, consulta y fragmento. Se normaliza a minúsculas y se quita una barra final. |
+| `TRUSTED_HOSTS` | `trusted_hosts` | `localhost,127.0.0.1` | lista de hosts sin puerto; admite `*.dominio` como comodín inicial, nunca `*` solo. No puede quedar vacía. Controla `TrustedHostMiddleware`. **En producción debe incluir el host público `test.zenixtech.ai`**: Apache (`ProxyPreserveHost On`) y nginx (`proxy_set_header Host $host`) reenvían ese `Host` al backend; si no está en la lista, todas las peticiones proxied devuelven **400**. |
+| `API_DOCS` | `api_docs` | `false` | `true` activa `/docs`, `/redoc` y `/openapi.json`. Con `false` esas rutas no existen (404). Desactivado en producción. |
 
-`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`.
+`Settings` lee `.env`. `.env.example` solo contiene marcadores: `API_IA_NVIDIA=`, `NVIDIA_MODEL=`, `DUCKDB_PATH=`, `CORS_ORIGINS=`, `TRUSTED_HOSTS=`, `API_DOCS=`.
 
-Frontend: `VITE_API_URL` (por defecto `http://localhost:8000` en desarrollo; `/api` en la imagen Docker).
+Ejemplo de producción (valores ilustrativos, sin secretos):
+
+```
+CORS_ORIGINS=https://test.zenixtech.ai
+TRUSTED_HOSTS=test.zenixtech.ai,127.0.0.1,localhost
+API_DOCS=false
+```
+
+Frontend: `VITE_API_URL` solo admite una ruta (`/api`) o una URL `http(s)` sin credenciales. Si se omite: en desarrollo `http://localhost:8000` y en producción `/api` (mismo origen, proxy de nginx). Docker Compose construye la imagen con `VITE_API_URL=/api`. La URL base no lleva secretos en el código.
+
+Frontend, cabeceras y CSP: `frontend/index.html` carga el tema con `<script src="/tema.js">` externo (sin script inline) y el cliente de API no envía credenciales. Se recomienda, para el despliegue de la página, una CSP `script-src 'self'` y `default-src 'self'`, y no usar `unsafe-inline`. La preferencia de tema se lee de `localStorage`; no se guardan tokens en `localStorage`.
 
 ## 11. Seguridad
 
 - `.env` ignorado por git; la clave nunca se escribe en código, logs, respuestas ni imágenes.
 - Defensa en profundidad para el SQL generado: validador AST, lista blanca de relaciones, conexión `read_only=True` con `enable_external_access=False`, límite de filas y tiempo máximo del LLM.
 - El texto del LLM se trata como no confiable (riesgo de inyección de prompt); la validación no depende del prompt.
-- Errores sin trazas ni detalles internos.
+- Errores sin trazas ni detalles internos; el 500 es genérico (`error_interno`) y la traza solo va al log del servidor.
+- Modelo de seguridad de la conexión frontend-backend (defensa en profundidad):
+  - CORS restringido a `CORS_ORIGINS` validados, sin credenciales (`allow_credentials=False`).
+  - Hosts de confianza con `TrustedHostMiddleware` (`TRUSTED_HOSTS`). **En producción `TRUSTED_HOSTS` debe incluir `test.zenixtech.ai`**, o todas las peticiones proxied responden 400.
+  - Documentación de la API desactivada por defecto (`API_DOCS=false`).
+  - Cabeceras de seguridad y CSP `default-src 'none'` en todas las respuestas de la API (ver 9.5).
+  - `POST /consulta`: exige `application/json` (415) y limita el cuerpo a 8192 bytes (413).
+  - Frontend: URL base sin valores fijos en código (`VITE_API_URL` validado), peticiones sin credenciales, comprobación de `Content-Type` JSON antes de parsear, tema cargado desde script externo, sin `innerHTML`/`eval`.
 - Contenedor backend con usuario no root; `.dockerignore` excluye secretos.
-- Fuera de alcance: autenticación.
+- Fuera de alcance: autenticación (no hay JWT, login ni cookies de sesión).
 
 ## 12. Estrategia de tests
 

@@ -35,7 +35,7 @@ def montar(db_prueba):
         app.dependency_overrides[get_settings] = lambda: settings
         if llm is not None:
             app.dependency_overrides[get_cliente_llm] = lambda: llm
-        return TestClient(app)
+        return TestClient(app, base_url="http://localhost")
 
     return _montar
 

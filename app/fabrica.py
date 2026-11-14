@@ -1,7 +1,7 @@
 """Fábrica de la API FastAPI: dashboard (vistas) y consultas en lenguaje natural."""
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.dependencias import get_repositorio, get_servicio, get_settings
 from app.errores import BaseDatosNoDisponibleError, ErrorAplicacion, ErrorEjecucionSQL
@@ -14,6 +14,12 @@ from app.modelos import (
     VentaMesPais,
 )
 from app.repositorio_vistas import RepositorioVistas
+from app.seguridad import (
+    CSP_DOCS,
+    GuardaCuerpoJSON,
+    MiddlewareSeguridad,
+    respuesta_error as _respuesta_error,
+)
 from app.servicio import ServicioConsultas
 from app.validador_sql import SQLNoPermitidoError
 from core.config import Settings
@@ -27,13 +33,6 @@ _ESTADOS = {
 }
 
 
-def _respuesta_error(estado: int, codigo: str, mensaje: str, sql: str | None = None):
-    cuerpo = {"error": codigo, "mensaje": mensaje}
-    if sql is not None:
-        cuerpo["sql"] = sql
-    return JSONResponse(status_code=estado, content=cuerpo)
-
-
 def _manejar_aplicacion(_: Request, exc: ErrorAplicacion):
     estado = next((e for t, e in _ESTADOS.items() if isinstance(exc, t)), 500)
     return _respuesta_error(estado, exc.codigo, exc.mensaje)
@@ -45,12 +44,29 @@ def _manejar_sql(_: Request, exc: SQLNoPermitidoError):
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
-    app = FastAPI(title="Consultas de pedidos en lenguaje natural")
+    docs = settings.api_docs
+    app = FastAPI(
+        title="Consultas de pedidos en lenguaje natural",
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
+    # add_middleware antepone: el último añadido es el más externo.
+    # Orden externo -> interno: seguridad -> hosts de confianza -> CORS -> guarda de /consulta.
+    app.add_middleware(GuardaCuerpoJSON, ruta="/consulta")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
+        allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
+        allow_headers=["Content-Type", "Accept"],
+    )
+    app.add_middleware(
+        TrustedHostMiddleware, allowed_hosts=settings.trusted_hosts, www_redirect=False
+    )
+    app.add_middleware(
+        MiddlewareSeguridad,
+        csp_por_ruta={"/docs": CSP_DOCS, "/redoc": CSP_DOCS} if docs else None,
     )
     app.add_exception_handler(ErrorAplicacion, _manejar_aplicacion)
     app.add_exception_handler(SQLNoPermitidoError, _manejar_sql)
