@@ -66,6 +66,20 @@ Requisito: existe un `docker-compose.yml` que funciona en local (paso s10 del PL
 5. Copiar el vhost, `sudo a2ensite test.zenixtech.ai`, `sudo apachectl configtest` y `sudo systemctl reload apache2`.
 6. Pruebas de humo desde fuera (sección 6).
 
+### 5.1 Automatización con paramiko (`deploy/`)
+
+Requiere `pip install paramiko`. Los scripts leen `.env` de la raíz (o el de `DEPLOY_ENV` si se trabaja desde un worktree), validan el host con `~/.ssh/known_hosts` y se conectan **solo por clave** (`~/.ssh/id_ed25519_vps`).
+
+| Comando | Qué hace |
+|---|---|
+| `python deploy/instalar_clave.py` | **Una sola vez, lo ejecuta la persona responsable.** Usa `VPS_PROD_PASSWORD` para añadir la clave pública a `authorized_keys` y comprueba el acceso por clave. |
+| `python deploy/desplegar.py preflight` | Solo lectura: SO, Apache y módulos, vhost activos con `test.zenixtech.ai`, Docker, puertos 80/443/8080 y disco. |
+| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
+| `python deploy/desplegar.py vhost [--reemplazar]` | Instala el vhost y los módulos y hace `configtest` y `reload`. Se niega si otro vhost activo ya usa `test.zenixtech.ai`, salvo con `--reemplazar`. Si `configtest` falla, restaura los vhost anteriores sin recargar Apache. |
+| `python deploy/desplegar.py humo` | Pruebas de humo locales (8080) y públicas (`https://test.zenixtech.ai`). |
+
+Todas las acciones aceptan `--dry-run`. Vuelta atrás de la app: apuntar `current` a la versión anterior en `releases/` y repetir `docker compose up -d`.
+
 Vuelta atrás: `sudo a2dissite test.zenixtech.ai && sudo systemctl reload apache2` (o reactivar el vhost anterior) y `docker compose down`. Los datos se regeneran con el ETL (`--si-falta`).
 
 ## 6. Pruebas de humo
