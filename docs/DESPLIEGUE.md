@@ -11,7 +11,7 @@ Despliegue de pruebas de la aplicación en un VPS propio con **Apache como proxy
 | VPS | Ubuntu con **Apache/2.4.58** escuchando en 80 (redirige a 443) | Cabecera `Server` al pedir por IP |
 | Acceso | SSH con las variables `VPS_PROD_USER`, `VPS_PROD_HOST` y `VPS_PROD_PASSWORD` de `.env` | Solo los nombres. Los valores nunca van al repositorio |
 
-> **Aviso:** en la fecha de comprobación `test.zenixtech.ai` ya sirve **otra aplicación** ("Panel de control", con `/api/health` activo). Antes de publicar este proyecto en ese nombre hay que decidir si se sustituye, si se usa otro subdominio (por ejemplo `pedidos.test.zenixtech.ai`) o si se publica bajo una subruta. No se debe sobrescribir el vhost existente sin esa decisión.
+> **Nota:** el VPS es compartido (Tequeños, CRM, n8n, Evolution, zenixtech, tntfinances). Antes de este despliegue no existía vhost para `test.zenixtech.ai` y Apache respondía con su vhost por defecto (`crm.tequenosdubai.com`, "Panel de control"). No había otra app que sustituir. Los puertos 8083–8086, 8100–8102 y 5678 ya están en uso; este proyecto usa `127.0.0.1:8080`.
 
 ## 2. Topología
 
@@ -42,8 +42,8 @@ flowchart LR
 
 - Apache 2.4 con los módulos `proxy`, `proxy_http`, `headers`, `ssl` y `rewrite`:
   `sudo a2enmod proxy proxy_http headers ssl rewrite`
-- Docker Engine con el plugin compose v2 o superior (pendiente de comprobar en el VPS).
-- Certificado del origen para `test.zenixtech.ai` en `/etc/ssl/` (o `certbot --apache`).
+- Docker Engine con el plugin compose (comprobado: Docker 29.7.1, Compose v5.4.0; Ubuntu 24.04.4).
+- Certificado Let's Encrypt en `/etc/letsencrypt/live/test.zenixtech.ai/`. Lo obtiene `desplegar.py vhost` con `certbot certonly --webroot` y se renueva solo. El bloque 443 del vhost va dentro de `<IfFile>`, así que solo se activa cuando existe el certificado.
 - Usuario de despliegue con acceso por **clave SSH**. La contraseña de `.env` solo sirve para dar de alta la clave; no debe usarse en scripts.
 
 ## 4. Configuración de Apache
@@ -65,6 +65,20 @@ Requisito: existe un `docker-compose.yml` que funciona en local (paso s10 del PL
 4. `curl -fsS http://127.0.0.1:8080/api/health` desde el VPS.
 5. Copiar el vhost, `sudo a2ensite test.zenixtech.ai`, `sudo apachectl configtest` y `sudo systemctl reload apache2`.
 6. Pruebas de humo desde fuera (sección 6).
+
+### 5.1 Automatización con paramiko (`deploy/`)
+
+Requiere `pip install paramiko`. Los scripts leen `.env` de la raíz (o el de `DEPLOY_ENV` si se trabaja desde un worktree), validan el host con `~/.ssh/known_hosts` y se conectan **solo por clave** (`~/.ssh/id_ed25519_vps`).
+
+| Comando | Qué hace |
+|---|---|
+| `python deploy/instalar_clave.py` | **Una sola vez, lo ejecuta la persona responsable.** Usa `VPS_PROD_PASSWORD` para añadir la clave pública a `authorized_keys` y comprueba el acceso por clave. |
+| `python deploy/desplegar.py preflight` | Solo lectura: SO, Apache y módulos, vhost activos con `test.zenixtech.ai`, Docker, puertos 80/443/8080 y disco. |
+| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
+| `python deploy/desplegar.py vhost [--reemplazar]` | Instala el vhost y los módulos y hace `configtest` y `reload`. Se niega si otro vhost activo ya usa `test.zenixtech.ai`, salvo con `--reemplazar`. Si `configtest` falla, restaura los vhost anteriores sin recargar Apache. |
+| `python deploy/desplegar.py humo` | Pruebas de humo locales (8080) y públicas (`https://test.zenixtech.ai`). |
+
+Todas las acciones aceptan `--dry-run`. Vuelta atrás de la app: apuntar `current` a la versión anterior en `releases/` y repetir `docker compose up -d`.
 
 Vuelta atrás: `sudo a2dissite test.zenixtech.ai && sudo systemctl reload apache2` (o reactivar el vhost anterior) y `docker compose down`. Los datos se regeneran con el ETL (`--si-falta`).
 
@@ -88,6 +102,21 @@ Vuelta atrás: `sudo a2dissite test.zenixtech.ai && sudo systemctl reload apache
 - Por IP: el origen responde con `Apache/2.4.58 (Ubuntu)`, lo que confirma Apache en el VPS.
 - SSH: el acceso por clave no está configurado (`Permission denied (publickey,password)`). No se entró con contraseña.
 - No había nada que desplegar: el repositorio todavía no tiene `docker-compose.yml` (paso s10 pendiente).
+
+### Segunda prueba: cadena completa con página provisional (2026-11-14)
+
+Tras instalar la clave con `instalar_clave.py`:
+
+1. `preflight`: Ubuntu 24.04.4, Apache 2.4.58 con `proxy`, `proxy_http`, `headers`, `ssl` y `rewrite` activos, Docker 29.7.1 / Compose v5.4.0, puerto 8080 libre, sin vhost ni certificado para el dominio.
+2. `placeholder`: contenedor `project-ai-role-placeholder` (nginx:alpine) en `127.0.0.1:8080` con una página estática. `app` lo retira antes de levantar compose.
+3. `vhost`: `configtest` correcto y `reload`; certificado emitido (caduca el 2027-02-12, renovación automática). Segundo `configtest` correcto y `reload`.
+4. `humo` y comprobaciones externas:
+   - `http://test.zenixtech.ai` → `301` a HTTPS.
+   - `https://test.zenixtech.ai/` → `200` con la página provisional (pasa por Cloudflare → Apache → 127.0.0.1:8080).
+   - `/api/health` → `404`, como se espera: aún no hay backend.
+   - `http://<ip-vps>:8080/` desde fuera → sin respuesta, solo loopback.
+   - Los demás sitios siguen respondiendo igual: tequenosdubai.com, crm, dashboard.zenixtech.ai y n8n con `200`; api.zenixtech.ai con `404` en `/` y `200` en `/health`, como antes.
+   - Ajeno a este cambio: el certificado de `tntfinances.com` caducó el 2026-11-04.
 
 ## 7. Seguridad
 
