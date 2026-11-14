@@ -11,7 +11,6 @@ Despliegue de pruebas de la aplicación en un VPS propio con **Apache como proxy
 | VPS | Ubuntu con **Apache/2.4.58** escuchando en 80 (redirige a 443) | Cabecera `Server` al pedir por IP |
 | Acceso | SSH con las variables `VPS_PROD_USER`, `VPS_PROD_HOST` y `VPS_PROD_PASSWORD` de `.env` | Solo los nombres. Los valores nunca van al repositorio |
 
-> **Nota:** el VPS es compartido (Tequeños, CRM, n8n, Evolution, zenixtech, tntfinances). Antes de este despliegue no existía vhost para `test.zenixtech.ai` y Apache respondía con su vhost por defecto (`crm.tequenosdubai.com`, "Panel de control"). No había otra app que sustituir. Los puertos 8083–8086, 8100–8102 y 5678 ya están en uso; este proyecto usa `127.0.0.1:8080`.
 
 ### Estado actual (2026-11-15)
 
@@ -60,13 +59,28 @@ El vhost versionado está en `deploy/apache/test.zenixtech.ai.conf`. Se copia a 
 - `ProxyPass / http://127.0.0.1:8080/` y `ProxyPassReverse` iguales.
 - `ProxyTimeout 60`, porque `POST /consulta` espera al LLM.
 - El vhost del puerto 80 solo redirige a HTTPS.
-- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend limita las consultas por esa cabecera (`CABECERA_IP_CLIENTE=X-Cliente-IP`). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
+- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend la usará para limitar las consultas por IP (`CABECERA_IP_CLIENTE=X-Cliente-IP`; pendiente, ver sección 7). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
 - **Cabeceras del HTML:** `Strict-Transport-Security: max-age=31536000; includeSubDomains` (siempre, porque solo quien termina TLS puede ponerla), y con `setifempty`, para no pisar las más estrictas de la API: `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` y una CSP. `setifempty` actúa sobre la tabla `onsuccess`, que es la que ve las cabeceras del backend, pero solo se aplica a respuestas 2xx y 3xx. Los errores de la API (4xx y 5xx, también el 429) reciben HSTS y las cabeceras que pone el propio backend.
 - **CSP en modo informe** (`Content-Security-Policy-Report-Only`): Cloudflare inyecta un script en línea (`/cdn-cgi/challenge-platform`) que una CSP estricta bloquearía. Se pasará a `Content-Security-Policy` cuando la consola del navegador no muestre avisos que importen.
 
+### 4.1 TRUSTED_HOSTS y la cabecera Host
+
+La cadena de proxies reenvía el `Host` original hasta el backend:
+
+```
+Cliente -> Cloudflare -> Apache (ProxyPreserveHost On) -> nginx del frontend (proxy_set_header Host $host) -> backend (Host: test.zenixtech.ai)
+```
+
+- El backend valida ese `Host` con `TrustedHostMiddleware` (`app/fabrica.py`). Lo que no esté en la lista responde **400**.
+- La lista es `TRUSTED_HOSTS`: valores separados por comas, sin puerto. Se puede dar `*.dominio` como comodín. Nunca `*` solo, y una lista vacía se rechaza.
+- Hay dos valores por defecto según cómo se arranque el backend:
+  - `core/config.py`: `localhost,127.0.0.1`. Un backend arrancado fuera de compose responde **400** al dominio público.
+  - `docker-compose.yml` (línea 9): `localhost,127.0.0.1,test.zenixtech.ai`, sobrescribible con la variable `TRUSTED_HOSTS` del shell o de `.env`. Por eso el stack publicado en el VPS acepta el dominio sin configuración adicional.
+- El healthcheck del contenedor llama a `127.0.0.1:8000/health`. Ese host siempre está permitido, así que el healthcheck **no detecta** un `TRUSTED_HOSTS` mal configurado. Para comprobarlo hay que probar con la cabecera `Host` del dominio público (sección 6).
+
 ## 5. Procedimiento de despliegue
 
-Requisito: existe un `docker-compose.yml` que funciona en local (paso s10 del PLAN) y publica el frontend en `127.0.0.1:8080:80`.
+Requisito: el `docker-compose.yml` del repositorio funciona en local y publica el frontend en `127.0.0.1:8080:80`.
 
 1. En el VPS: `git clone` (o `git pull`) del repositorio en `/opt/project-ai-role`.
 2. Copiar el `.env` de ejecución con `scp` (solo `API_IA_NVIDIA` y la configuración de la app; las variables `VPS_PROD_*` no hacen falta en el servidor).
@@ -102,15 +116,37 @@ Vuelta atrás: `sudo a2dissite test.zenixtech.ai && sudo systemctl reload apache
 | Dashboard | `curl -s https://test.zenixtech.ai/api/top-clientes` | `200` con lista de clientes |
 | Consulta NL | `curl -s -X POST https://test.zenixtech.ai/api/consulta -H 'Content-Type: application/json' -d '{"pregunta":"ventas totales por país"}'` | `200` con `sql`, `columnas` y `filas` |
 | Puerto cerrado | `curl -m 5 http://<ip-vps>:8080/` desde fuera | Sin respuesta (solo loopback) |
+| Host permitido (local, en el VPS) | `curl -s -o /dev/null -w '%{http_code}' -H 'Host: test.zenixtech.ai' http://127.0.0.1:8080/api/health` | `200` |
+| Host no permitido (local, en el VPS) | `curl -s -o /dev/null -w '%{http_code}' -H 'Host: evil.example' http://127.0.0.1:8080/api/health` | `400` |
 
-### Resultado de la primera prueba (2026-11-14)
+Las dos últimas filas comprueban `TRUSTED_HOSTS` a través de nginx, sin depender del healthcheck (sección 4.1).
+
+### Resultado del despliegue (2026-11-15)
+
+- Despliegue con `python deploy/desplegar.py app --ref feat/implementacion` (paramiko, solo clave SSH), commit `35005f0`, anterior a PR #4.
+- Preflight del VPS: Ubuntu 24.04.4 LTS, Apache 2.4.58 con `proxy`, `proxy_http`, `headers`, `ssl` y `rewrite`, Docker 29.7.1 / Compose v5.4.0, 85 GB libres. Certificado Let's Encrypt para `test.zenixtech.ai`.
+- Vhost `test.zenixtech.ai.conf` activo.
+- Comprobaciones externas desde fuera del VPS:
+  - `http://test.zenixtech.ai` → `301` a HTTPS.
+  - `/` → `200` (la SPA real).
+  - `/api/health` → `200`.
+  - `/api/top-clientes` → `200` (10 clientes).
+  - `/api/ventas-por-mes-pais` → `200` (107 filas; 18 con `?pais=España`).
+  - `POST /api/consulta` con «¿Cuánto vendimos en España en marzo de 2024?» → `200` en 5 s, total `8748.85`.
+  - `POST /api/consulta` con «Borra la tabla pedidos» → responde con una consulta `SELECT` de solo lectura.
+  - Cuerpo vacío → `422`.
+  - Puerto 8000 cerrado desde fuera.
+- Pruebas de `Host` (filas de la tabla de la sección 6), comprobadas en local con las imágenes reconstruidas desde cero (paso s1, e000282): sin cabecera `Host` → `200`; `Host: test.zenixtech.ai` → `200`; `Host: evil.example` → `400`.
+- El VPS sigue ejecutando el commit `35005f0` (anterior a PR #4). Ahí el comportamiento de `Host` aplicará cuando se redespliegue `main`; hasta entonces no se ha comprobado en el VPS.
+- En esa fecha no había cabecera HSTS; la añadió después el vhost endurecido (tercera prueba). Siguen pendientes la autenticación y el límite de tasa (ver sección 7).
+
+### Primera prueba (2026-11-14), histórica
 
 - DNS: correcto, resuelve a Cloudflare.
 - HTTP: `301` a HTTPS, correcto.
 - HTTPS: `200`, pero servía el vhost por defecto del servidor ("Panel de control"). En esa fecha el proyecto aún no estaba desplegado (ver "Estado actual").
 - Por IP: el origen responde con `Apache/2.4.58 (Ubuntu)`, lo que confirma Apache en el VPS.
-- SSH: el acceso por clave no está configurado (`Permission denied (publickey,password)`). No se entró con contraseña.
-- No había nada que desplegar: el repositorio todavía no tiene `docker-compose.yml` (paso s10 pendiente).
+- SSH: el acceso por clave no estaba configurado. No se entró con contraseña.
 
 ### Segunda prueba: cadena completa con página provisional (2026-11-14)
 
@@ -124,8 +160,6 @@ Tras instalar la clave con `instalar_clave.py`:
    - `https://test.zenixtech.ai/` → `200` con la página provisional (pasa por Cloudflare → Apache → 127.0.0.1:8080).
    - `/api/health` → `404`, como se espera: aún no hay backend.
    - `http://<ip-vps>:8080/` desde fuera → sin respuesta, solo loopback.
-   - Los demás sitios siguen respondiendo igual: tequenosdubai.com, crm, dashboard.zenixtech.ai y n8n con `200`; api.zenixtech.ai con `404` en `/` y `200` en `/health`, como antes.
-   - Ajeno a este cambio: el certificado de `tntfinances.com` caducó el 2026-11-04.
 
 ### Tercera prueba: cabeceras e IP del cliente (2026-11-15)
 
@@ -139,5 +173,7 @@ Tras `desplegar.py vhost` con el vhost endurecido (`configtest` correcto, `reloa
 
 - `.env` está en `.gitignore`. Las credenciales del VPS no se copian a imágenes, al servidor ni a los documentos.
 - Recomendado: desactivar `PasswordAuthentication` en el VPS una vez dada de alta la clave, y no usar `root` para desplegar.
-- **Acceso público sin login:** `test.zenixtech.ai` es accesible por cualquiera y cada pregunta consume la clave de NVIDIA. La autenticación sigue fuera de alcance; como protección, el backend limita `POST /consulta` por IP de cliente y con un tope diario global (ver `docs/TRD.md`). La IP sale de `X-Cliente-IP`, que solo Apache puede fijar.
+- **Acceso público sin login:** `test.zenixtech.ai` es accesible por cualquiera y cada pregunta consume la clave de NVIDIA. La autenticación sigue fuera de alcance (ver `revision-arquitectura.md`, sección 6).
+- **Límite de tasa (pendiente):** Apache ya fija `X-Cliente-IP` con la IP real del cliente (sección 4) y el script de despliegue escribe `CABECERA_IP_CLIENTE=X-Cliente-IP`, pero el límite de `POST /consulta` por IP y el tope diario global todavía no están en `main` (se desarrollan en la rama `feat/limite-consultas`). Hasta entonces la variable no tiene efecto.
+- **HSTS:** lo pone Apache desde el vhost endurecido (tercera prueba de la sección 6).
 - **Si hace falta cerrar el entorno de pruebas del todo:** autenticación básica de Apache (`AuthType Basic`) en el vhost, con la contraseña gestionada por el responsable fuera del repositorio.
