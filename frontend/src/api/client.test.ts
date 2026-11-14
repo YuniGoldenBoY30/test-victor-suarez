@@ -3,6 +3,7 @@ import {
   ApiError,
   enviarConsulta,
   obtenerTopClientes,
+  modoPeticion,
   obtenerVentasPorMesPais,
   resolverUrlBase,
   URL_BASE,
@@ -29,14 +30,43 @@ function simularFetch(respuesta: Response | Error | DOMException) {
 }
 
 describe('resolverUrlBase', () => {
-  it('usa el valor por defecto si no hay variable o está vacía', () => {
-    expect(resolverUrlBase(undefined)).toBe('http://localhost:8000')
-    expect(resolverUrlBase('  ')).toBe('http://localhost:8000')
+  it('en desarrollo usa localhost si no hay variable o está vacía', () => {
+    expect(resolverUrlBase(undefined, true)).toBe('http://localhost:8000')
+    expect(resolverUrlBase('  ', true)).toBe('http://localhost:8000')
+  })
+
+  it('en producción usa /api (mismo origen) por defecto', () => {
+    expect(resolverUrlBase(undefined, false)).toBe('/api')
+    expect(resolverUrlBase('', false)).toBe('/api')
   })
 
   it('quita la barra final y admite rutas relativas (Docker)', () => {
     expect(resolverUrlBase('/api/')).toBe('/api')
     expect(resolverUrlBase('http://api.local:9000//')).toBe('http://api.local:9000')
+    expect(resolverUrlBase('https://api.example.com')).toBe('https://api.example.com')
+  })
+
+  it.each([
+    'javascript:alert(1)',
+    'data:text/html,<b>x</b>',
+    'file:///etc/passwd',
+    'ftp://host/x',
+    '//evil.example',
+    '/\\evil.example',
+    'api',
+    'localhost:8000',
+    'https://usuario:clave@api.example.com',
+    'https://usuario@api.example.com',
+  ])('rechaza la URL no segura o inválida %s', (valor) => {
+    expect(() => resolverUrlBase(valor, false)).toThrow()
+  })
+})
+
+describe('modoPeticion', () => {
+  it('usa same-origin para rutas relativas y cors para URL absolutas', () => {
+    expect(modoPeticion('/api')).toBe('same-origin')
+    expect(modoPeticion('http://localhost:8000')).toBe('cors')
+    expect(modoPeticion('https://api.example.com')).toBe('cors')
   })
 })
 
@@ -72,6 +102,33 @@ describe('cliente de API', () => {
     expect(init?.method).toBe('POST')
     expect(init?.body).toBe(JSON.stringify({ pregunta: 'p' }))
     expect(new Headers(init?.headers).get('Content-Type')).toBe('application/json')
+  })
+
+  it('endurece las opciones de fetch (sin cookies, sin referrer, sin caché)', async () => {
+    simularFetch(respuestaJson([]))
+    await obtenerTopClientes()
+    const init = fetchSimulado.mock.calls[0]![1]!
+    expect(init.credentials).toBe('omit')
+    expect(init.referrerPolicy).toBe('no-referrer')
+    expect(init.mode).toBe(modoPeticion(URL_BASE))
+    expect(init.cache).toBe('no-store')
+    expect(init.redirect).toBe('error')
+  })
+
+  it('no interpreta una respuesta 200 que no declara JSON', async () => {
+    simularFetch(new Response('[{"cliente":"Ana"}]', { status: 200, headers: { 'Content-Type': 'text/html' } }))
+    await expect(obtenerTopClientes()).rejects.toMatchObject({ error: 'error_desconocido', status: 200 })
+  })
+
+  it('no interpreta un error cuyo cuerpo no declara JSON', async () => {
+    const cuerpo = JSON.stringify({ error: 'llm_error', mensaje: 'x' })
+    simularFetch(new Response(cuerpo, { status: 502, headers: { 'Content-Type': 'text/plain' } }))
+    await expect(obtenerTopClientes()).rejects.toMatchObject({ error: 'error_desconocido', status: 502 })
+  })
+
+  it('acepta application/json con charset', async () => {
+    simularFetch(new Response('[]', { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8' } }))
+    await expect(obtenerTopClientes()).resolves.toEqual([])
   })
 })
 

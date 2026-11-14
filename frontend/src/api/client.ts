@@ -6,15 +6,47 @@ import type {
   VentaMesPais,
 } from './types'
 
-const URL_BASE_DEFECTO = 'http://localhost:8000'
+const URL_BASE_DESARROLLO = 'http://localhost:8000'
+/** En producción la API se sirve en el mismo origen (proxy), nunca en un host fijo. */
+const URL_BASE_PRODUCCION = '/api'
 
-/** Normaliza la URL base: valor vacío -> defecto; sin barra final. */
-export function resolverUrlBase(valor: string | undefined): string {
+/**
+ * Valida y normaliza la URL base de la API (sin barra final).
+ * Vacío -> localhost en desarrollo y `/api` en producción. Solo se admiten una
+ * ruta absoluta del mismo origen (`/api`) o una URL http(s) sin credenciales.
+ */
+export function resolverUrlBase(
+  valor: string | undefined,
+  esDesarrollo: boolean = import.meta.env.DEV,
+): string {
   const limpio = (valor ?? '').trim()
-  return (limpio === '' ? URL_BASE_DEFECTO : limpio).replace(/\/+$/, '')
+  if (limpio === '') return esDesarrollo ? URL_BASE_DESARROLLO : URL_BASE_PRODUCCION
+
+  const invalida = () => new Error('VITE_API_URL no es válida: use una ruta como /api o una URL http(s).')
+
+  if (limpio.startsWith('/')) {
+    // '//host' y '/\\host' son URL relativas al protocolo: apuntan a otro origen.
+    if (limpio.startsWith('//') || limpio.includes('\\')) throw invalida()
+    return limpio.replace(/\/+$/, '')
+  }
+
+  let url: URL
+  try {
+    url = new URL(limpio)
+  } catch {
+    throw invalida()
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw invalida()
+  if (url.username !== '' || url.password !== '') throw invalida()
+  return limpio.replace(/\/+$/, '')
 }
 
 export const URL_BASE = resolverUrlBase(import.meta.env.VITE_API_URL)
+
+/** Una base relativa es del mismo origen; una absoluta exige CORS. */
+export function modoPeticion(base: string): 'same-origin' | 'cors' {
+  return base.startsWith('/') ? 'same-origin' : 'cors'
+}
 
 interface OpcionesPeticion {
   method?: 'GET' | 'POST'
@@ -22,7 +54,14 @@ interface OpcionesPeticion {
   signal?: AbortSignal
 }
 
+function esJson(respuesta: Response): boolean {
+  const tipo = (respuesta.headers.get('Content-Type') ?? '').split(';')[0]?.trim().toLowerCase() ?? ''
+  return tipo === 'application/json' || /^application\/[\w.+-]+\+json$/.test(tipo)
+}
+
 async function leerJson(respuesta: Response): Promise<unknown> {
+  // Un cuerpo que no declara JSON no se interpreta.
+  if (!esJson(respuesta)) return undefined
   try {
     return await respuesta.json()
   } catch {
@@ -38,6 +77,11 @@ async function peticion<T>(ruta: string, opciones: OpcionesPeticion = {}): Promi
     respuesta = await fetch(`${URL_BASE}${ruta}`, {
       method,
       signal,
+      mode: modoPeticion(URL_BASE),
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+      cache: 'no-store',
+      redirect: 'error',
       headers: {
         Accept: 'application/json',
         ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
