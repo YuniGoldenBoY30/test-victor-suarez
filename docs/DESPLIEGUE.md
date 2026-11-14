@@ -13,6 +13,12 @@ Despliegue de pruebas de la aplicación en un VPS propio con **Apache como proxy
 
 > **Nota:** el VPS es compartido (Tequeños, CRM, n8n, Evolution, zenixtech, tntfinances). Antes de este despliegue no existía vhost para `test.zenixtech.ai` y Apache respondía con su vhost por defecto (`crm.tequenosdubai.com`, "Panel de control"). No había otra app que sustituir. Los puertos 8083–8086, 8100–8102 y 5678 ya están en uso; este proyecto usa `127.0.0.1:8080`.
 
+### Estado actual (2026-11-15)
+
+- **Desplegado:** la aplicación real (no la página provisional) está publicada en `https://test.zenixtech.ai` desde la versión `35005f0` de la rama `feat/implementacion`, en `/opt/project-ai-role/releases/35005f0` (enlace `current`). Contenedores `project-ai-role-backend-1` (sano) y `project-ai-role-frontend-1`.
+- **Probado en un navegador real:** el panel carga ventas y top de clientes sin errores en consola, y una pregunta en lenguaje natural devuelve el SQL y la tabla (`POST /api/consulta` → `200`).
+- **Pendiente:** esa versión es anterior al endurecimiento de seguridad (PR #4). Al fusionar la PR #3 hay que volver a desplegar desde `main`: `python deploy/desplegar.py app --ref main`. El script ya escribe `TRUSTED_HOSTS`, `CORS_ORIGINS` y `CABECERA_IP_CLIENTE` en el `.env` del servidor (sección 5.1); sin `TRUSTED_HOSTS`, esa versión respondería `400` a todo.
+
 ## 2. Topología
 
 ```mermaid
@@ -40,8 +46,8 @@ flowchart LR
 
 ## 3. Requisitos en el VPS
 
-- Apache 2.4 con los módulos `proxy`, `proxy_http`, `headers`, `ssl` y `rewrite`:
-  `sudo a2enmod proxy proxy_http headers ssl rewrite`
+- Apache 2.4 con los módulos `proxy`, `proxy_http`, `headers`, `ssl`, `rewrite` y `remoteip`:
+  `sudo a2enmod proxy proxy_http headers ssl rewrite remoteip`
 - Docker Engine con el plugin compose (comprobado: Docker 29.7.1, Compose v5.4.0; Ubuntu 24.04.4).
 - Certificado Let's Encrypt en `/etc/letsencrypt/live/test.zenixtech.ai/`. Lo obtiene `desplegar.py vhost` con `certbot certonly --webroot` y se renueva solo. El bloque 443 del vhost va dentro de `<IfFile>`, así que solo se activa cuando existe el certificado.
 - Usuario de despliegue con acceso por **clave SSH**. La contraseña de `.env` solo sirve para dar de alta la clave; no debe usarse en scripts.
@@ -54,6 +60,9 @@ El vhost versionado está en `deploy/apache/test.zenixtech.ai.conf`. Se copia a 
 - `ProxyPass / http://127.0.0.1:8080/` y `ProxyPassReverse` iguales.
 - `ProxyTimeout 60`, porque `POST /consulta` espera al LLM.
 - El vhost del puerto 80 solo redirige a HTTPS.
+- **IP real del cliente:** `mod_remoteip` toma `CF-Connecting-IP` solo si la conexión llega desde los rangos publicados de Cloudflare (`RemoteIPTrustedProxy`). Después, `RequestHeader set X-Cliente-IP "expr=%{REMOTE_ADDR}"` **sobrescribe** cualquier `X-Cliente-IP` que mande el cliente. El backend limita las consultas por esa cabecera (`CABECERA_IP_CLIENTE=X-Cliente-IP`). Si Cloudflare cambia sus rangos, hay que actualizar la lista (https://www.cloudflare.com/ips-v4 y `/ips-v6`).
+- **Cabeceras del HTML:** `Strict-Transport-Security: max-age=31536000; includeSubDomains` (siempre, porque solo quien termina TLS puede ponerla), y con `setifempty`, para no pisar las más estrictas de la API: `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` y una CSP. `setifempty` actúa sobre la tabla `onsuccess`, que es la que ve las cabeceras del backend, pero solo se aplica a respuestas 2xx y 3xx. Los errores de la API (4xx y 5xx, también el 429) reciben HSTS y las cabeceras que pone el propio backend.
+- **CSP en modo informe** (`Content-Security-Policy-Report-Only`): Cloudflare inyecta un script en línea (`/cdn-cgi/challenge-platform`) que una CSP estricta bloquearía. Se pasará a `Content-Security-Policy` cuando la consola del navegador no muestre avisos que importen.
 
 ## 5. Procedimiento de despliegue
 
@@ -74,7 +83,7 @@ Requiere `pip install paramiko`. Los scripts leen `.env` de la raíz (o el de `D
 |---|---|
 | `python deploy/instalar_clave.py` | **Una sola vez, lo ejecuta la persona responsable.** Usa `VPS_PROD_PASSWORD` para añadir la clave pública a `authorized_keys` y comprueba el acceso por clave. |
 | `python deploy/desplegar.py preflight` | Solo lectura: SO, Apache y módulos, vhost activos con `test.zenixtech.ai`, Docker, puertos 80/443/8080 y disco. |
-| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
+| `python deploy/desplegar.py app [--ref <rama>]` | `git archive` de la ref, subida por SFTP a `/opt/project-ai-role/releases/<sha>`, `.env` sin `VPS_*` (modo 600) en `shared/`, al que añade `TRUSTED_HOSTS=test.zenixtech.ai,localhost,127.0.0.1`, `CORS_ORIGINS=https://test.zenixtech.ai` y `CABECERA_IP_CLIENTE=X-Cliente-IP` si el `.env` local no los define, enlace `current` y `docker compose up -d --build`; espera a `/api/health` en `127.0.0.1:8080`. Se niega si la ref no tiene `docker-compose.yml`. |
 | `python deploy/desplegar.py vhost [--reemplazar]` | Instala el vhost y los módulos y hace `configtest` y `reload`. Se niega si otro vhost activo ya usa `test.zenixtech.ai`, salvo con `--reemplazar`. Si `configtest` falla, restaura los vhost anteriores sin recargar Apache. |
 | `python deploy/desplegar.py humo` | Pruebas de humo locales (8080) y públicas (`https://test.zenixtech.ai`). |
 
@@ -98,7 +107,7 @@ Vuelta atrás: `sudo a2dissite test.zenixtech.ai && sudo systemctl reload apache
 
 - DNS: correcto, resuelve a Cloudflare.
 - HTTP: `301` a HTTPS, correcto.
-- HTTPS: `200`, pero sirve otra aplicación ("Panel de control"). Este proyecto **aún no está desplegado**.
+- HTTPS: `200`, pero servía el vhost por defecto del servidor ("Panel de control"). En esa fecha el proyecto aún no estaba desplegado (ver "Estado actual").
 - Por IP: el origen responde con `Apache/2.4.58 (Ubuntu)`, lo que confirma Apache en el VPS.
 - SSH: el acceso por clave no está configurado (`Permission denied (publickey,password)`). No se entró con contraseña.
 - No había nada que desplegar: el repositorio todavía no tiene `docker-compose.yml` (paso s10 pendiente).
@@ -118,8 +127,17 @@ Tras instalar la clave con `instalar_clave.py`:
    - Los demás sitios siguen respondiendo igual: tequenosdubai.com, crm, dashboard.zenixtech.ai y n8n con `200`; api.zenixtech.ai con `404` en `/` y `200` en `/health`, como antes.
    - Ajeno a este cambio: el certificado de `tntfinances.com` caducó el 2026-11-04.
 
+### Tercera prueba: cabeceras e IP del cliente (2026-11-15)
+
+Tras `desplegar.py vhost` con el vhost endurecido (`configtest` correcto, `reload`):
+
+- `https://test.zenixtech.ai/` devuelve `Strict-Transport-Security`, `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y la CSP en modo informe.
+- **Suplantación de IP:** una petición directa al origen (sin pasar por Cloudflare) con `X-Cliente-IP: 6.6.6.6` y `CF-Connecting-IP: 7.7.7.7` llega al contenedor con `X-Cliente-IP: 127.0.0.1`, es decir, la IP real del que conecta. Una petición que sí pasa por Cloudflare llega con la IP real del cliente. Comprobado con `tcpdump` en el puerto 8080 del VPS.
+- Los demás sitios del VPS siguen respondiendo `200`.
+
 ## 7. Seguridad
 
 - `.env` está en `.gitignore`. Las credenciales del VPS no se copian a imágenes, al servidor ni a los documentos.
 - Recomendado: desactivar `PasswordAuthentication` en el VPS una vez dada de alta la clave, y no usar `root` para desplegar.
-- Puntos abiertos del despliegue público: autenticación y límite de tasa (ver `revision-arquitectura.md`, sección 6). `test.zenixtech.ai` es accesible por cualquiera, así que cada pregunta consume la clave de NVIDIA.
+- **Acceso público sin login:** `test.zenixtech.ai` es accesible por cualquiera y cada pregunta consume la clave de NVIDIA. La autenticación sigue fuera de alcance; como protección, el backend limita `POST /consulta` por IP de cliente y con un tope diario global (ver `docs/TRD.md`). La IP sale de `X-Cliente-IP`, que solo Apache puede fijar.
+- **Si hace falta cerrar el entorno de pruebas del todo:** autenticación básica de Apache (`AuthType Basic`) en el vhost, con la contraseña gestionada por el responsable fuera del repositorio.
